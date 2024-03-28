@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}
+            Fashion Social Media
+        {% endblock %}
+    </title>
+    <link rel="shortcut icon" type="image/x-icon" href="../static/img/icon.png" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../static/styles/style.css">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="top">
+            <div class="logo">
+            </div>
+            <i class="bx bx-menu" id="btn"></i>
+        </div>
+        <div class="user">
+            <a href="/home"><h2>fsm</h2></a>
+            <a href="/home"><p>Fashion Social Media</p></a>
+        </div>
+        <ul>
+            <li>
+                <a href="/explore" >
+                    <i class='bx bx-compass'></i>
+                    <span class="nav-item">Explore</span>
+                </a>
+                <span class="tooltip">Explore</span>
+            </li>
+            <li>
+                <a href="/Notifications">
+                    <i class='bx bx-bell'></i>
+                    <span class="nav-item">Notifications</span>
+                </a>
+                <span class="tooltip">Notifications</span>
+            </li>
+            <li>
+                <a href="/Boards">
+                    <i class='bx bx-photo-album' ></i>
+                    <span class="nav-item">Boards</span>
+                </a>
+                <span class="tooltip">Boards</span>
+            </li>
+            <li>
+                <a href="/Polls">
+                    <i class='bx bx-poll' ></i>
+                    <span class="nav-item">Polls</span>
+                </a>
+                <span class="tooltip">Polls</span>
+            </li>
+            <li>
+                <a href="/Disussions">
+                    <i class='bx bx-conversation' ></i>
+                    <span class="nav-item">Discussions</span>
+                </a>
+                <span class="tooltip">Discussions</span>
+            </li>
+            <li>
+                <a href="/News">
+                    <i class='bx bx-news' ></i>
+                    <span class="nav-item">News</span>
+                </a>
+                <span class="tooltip">News</span>
+            </li>
+            <li>
+                <a href="/Create">
+                    <i class='bx bx-plus-circle'></i>
+                    <span class="nav-item">Create</span>
+                </a>
+                <span class="tooltip">Create</span>
+            </li>
+            <li>
+                <a href="/singin">
+                    <i class='bx bx-log-out' ></i>
+                    <span class="nav-item">Logout</span>
+                </a>
+                <span class="tooltip">Logout</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+</body>
+
+<script>
+    let btn = document.querySelector('#btn')
+    let sidebar = document.querySelector('.sidebar')
+
+    btn.onclick = function() {
+        sidebar.classList.toggle('active')
+    }
+</script>
+
+</html>
