@@ -21,65 +21,57 @@
             <i class="bx bx-menu" id="btn"></i>
         </div>
         <div class="user">
-            <a href="/home"><h2>fsm</h2></a>
-            <a href="/home"><p>Fashion Social Media</p></a>
+            <a href="{% url 'home' %}"><h2>fsm</h2></a>
+            <a href="{% url 'home' %}"><p>Fashion Social Media</p></a>
         </div>
         <ul>
             <li>
-                <a href="/explore" >
+                <a href="{% url 'explore' %}" >
                     <i class='bx bx-compass'></i>
                     <span class="nav-item">Explore</span>
                 </a>
-                <span class="tooltip">Explore</span>
             </li>
             <li>
-                <a href="/Notifications">
+                <a href="{% url 'notifications' %}">
                     <i class='bx bx-bell'></i>
                     <span class="nav-item">Notifications</span>
                 </a>
-                <span class="tooltip">Notifications</span>
             </li>
             <li>
-                <a href="/Boards">
+                <a href="{% url 'boards' %}">
                     <i class='bx bx-photo-album' ></i>
                     <span class="nav-item">Boards</span>
                 </a>
-                <span class="tooltip">Boards</span>
             </li>
             <li>
-                <a href="/Polls">
+                <a href="{% url 'polls' %}">
                     <i class='bx bx-poll' ></i>
                     <span class="nav-item">Polls</span>
                 </a>
-                <span class="tooltip">Polls</span>
             </li>
             <li>
-                <a href="/Disussions">
+                <a href="{% url 'discussions' %}">
                     <i class='bx bx-conversation' ></i>
                     <span class="nav-item">Discussions</span>
                 </a>
-                <span class="tooltip">Discussions</span>
             </li>
             <li>
-                <a href="/News">
+                <a href="{% url 'news' %}">
                     <i class='bx bx-news' ></i>
                     <span class="nav-item">News</span>
                 </a>
-                <span class="tooltip">News</span>
             </li>
             <li>
-                <a href="/Create">
+                <a href="{% url 'create' %}">
                     <i class='bx bx-plus-circle'></i>
                     <span class="nav-item">Create</span>
                 </a>
-                <span class="tooltip">Create</span>
             </li>
             <li>
-                <a href="/singin">
+                <a href="{% url 'signin' %}">
                     <i class='bx bx-log-out' ></i>
                     <span class="nav-item">Logout</span>
                 </a>
-                <span class="tooltip">Logout</span>
             </li>
         </ul>
     </div>
@@ -99,7 +91,30 @@
 
     btn.onclick = function() {
         sidebar.classList.toggle('active')
+
     }
+
+    window.onload = function() {
+
+    // Check local storage on page load
+    let sidebarState = localStorage.getItem('sidebarState');
+    if (sidebarState === 'open') {
+        sidebar.classList.add('active');
+    } else {
+        sidebar.classList.remove('active');
+    }
+
+    btn.onclick = function() {
+        sidebar.classList.toggle('active');
+
+        // Save state to local storage on button click
+        if (sidebar.classList.contains('active')) {
+            localStorage.setItem('sidebarState', 'open');
+        } else {
+            localStorage.setItem('sidebarState', 'closed');
+        }
+    }
+}
 </script>
 
 </html>
