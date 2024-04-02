@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles/registerstyle.css">
+    <link rel="stylesheet" href="../static/styles/style.css">
+
+    <title>Register</title>
+</head>
+<body>
+
+
+
+<div class="container">
+<h2>fsm™</h2>
+<h3>Register here!</h3>
+    <form method="POST" action="">
+    {% csrf_token %}
+    <label><i class="bx bx-user"></i> {{ form.username.label_tag }}</label>
+    {{ form.username }}
+    <br>
+    <label><i class="bx bx-envelope"></i> {{ form.email.label_tag }}</label>
+    {{ form.email }}
+
+    <br>
+    <label><i class="bx bx-lock-alt"></i> {{ form.password1.label_tag }}</label>
+    {{ form.password1 }}
+
+    <br>
+    <label><i class="bx bx-lock-alt"></i> {{ form.password2.label_tag }}</label>
+    {{ form.password2 }}
+
+    <br>
+    {% for message in messages %}
+    <p class="error-message">{{ message }}</p>
+    {% endfor %}
+    <br>
+    <input type="submit" value="Create Account!">
+    </form>
+
+    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+</div>
+
+<script>
+    const form_fields = document.getElementsByTagName('input');
+    form_fields[1].placeholder='Enter Username...';
+    form_fields[2].placeholder='Enter email...';
+    form_fields[3].placeholder='Enter password...';
+    form_fields[4].placeholder='Re-enter Password...';
+
+    for (const field in form_fields){
+        form_fields[field].className += ' form-control'
+    }
+</script>
+
+</body>
+</html>

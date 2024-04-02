@@ -14,6 +14,7 @@
 </head>
 
 <body>
+
     <div class="sidebar">
         <div class="top">
             <div class="logo">
@@ -21,10 +22,22 @@
             <i class="bx bx-menu" id="btn"></i>
         </div>
         <div class="user">
-            <a href="{% url 'home' %}"><h2>fsm</h2></a>
+            <a href="{% url 'home' %}"><h2>fsm™</h2></a>
             <a href="{% url 'home' %}"><p>Fashion Social Media</p></a>
         </div>
         <ul>
+            <li>
+                <a href="">
+                    <i class='bx bx-user' ></i>
+                    <span class="nav-item">
+                        {% if request.user.is_authenticated %}
+                            Welcome, {{ request.user }}
+                        {% else %}
+                            Welcome, User
+                        {% endif %}
+                    </span>
+                </a>
+            </li>
             <li>
                 <a href="{% url 'explore' %}" >
                     <i class='bx bx-compass'></i>
@@ -67,8 +80,9 @@
                     <span class="nav-item">Create</span>
                 </a>
             </li>
+
             <li>
-                <a href="{% url 'signin' %}">
+                <a href="{% url 'logout' %}">
                     <i class='bx bx-log-out' ></i>
                     <span class="nav-item">Logout</span>
                 </a>

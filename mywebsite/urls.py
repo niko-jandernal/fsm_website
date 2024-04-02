@@ -11,7 +11,10 @@ urlpatterns = [
     path('discussions', views.discussions, name='discussions'),
     path('news', views.news, name='news'),
     path('create', views.create, name='create'),
-    path('signin', views.signin, name='signin'),
+    path('register', views.register, name='register'),
+    path('login', views.loginPage, name='login'),
+    path('logout', views.logoutUser, name='logout'),
+
 
 
 ]
