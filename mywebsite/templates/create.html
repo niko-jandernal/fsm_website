@@ -1,4 +1,77 @@
-{% extends "base.html" %}  {% block title%} Create {% endblock %}
+{% extends 'base.html' %}
+
+{%block head %}
+
+{% block title %}
+Create Post
+{% endblock %}
+
+
+
+{% endblock %}
 {% block content %}
-<h1>Create</h1>
+<link rel="stylesheet" href="../static/styles/createstyle.css">
+
+<div class="create-post-container">
+    <form method="post" enctype="multipart/form-data" class="create-post-form">
+        {% csrf_token %}
+        <h2 class="create-post-title">Post a new photo</h2>
+
+        <div class="create-post-body">
+            <div class="left-panel">
+                <!-- This label works as the upload button -->
+                <label for="id_image" class="image-upload-label">
+                    <!-- Actual file input, hidden but functional -->
+                    <input type="file" name="image" accept="image/*" required="" aria-invalid="true" id="id_image">
+
+                    <div class="image-upload-placeholder">
+                        <div class="plus-icon">+</div>
+                        <div class="add-photos-text">Add photos</div>
+                    </div>
+                    <!-- Image preview container, initially hidden -->
+                    <img id="imagePreview" src="#" alt="Image Preview" class="image-preview" />
+                </label>
+            </div>
+
+            <div class="right-panel">
+                <div class="user-info">
+                    <!-- Display username and current date -->
+                    <i class='bx bx-user'></i>
+                    <p class="username">{{ user.username }}</p>
+{#                    <p class="current-date">{{ current_date }}</p>#}
+                </div>
+
+                <div class="caption-container">
+                    <!-- Caption input -->
+                    <label for="{{ form.caption.id_for_label }}">Caption</label>
+                    <label for="id_caption"></label><textarea id="id_caption" name="caption" class="form-control" placeholder="Write your caption here..." rows="4" style="min-height: 200px; line-height: 1.5;"></textarea>
+
+                </div>
+
+            </div>
+            <button type="submit" class="post-button">Post</button>
+        </div>
+    </form>
+</div>
+
+<script>
+// JavaScript for handling image preview functionality
+document.addEventListener("DOMContentLoaded", function() {
+    var fileInput = document.getElementById('id_image');
+    var imagePreview = document.getElementById('imagePreview');
+    var imagePlaceholder = document.querySelector('.image-upload-placeholder');
+
+    fileInput.addEventListener('change', function(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            imagePreview.src = reader.result;
+            imagePreview.style.display = 'block'; // Show the image preview
+            imagePlaceholder.style.display = 'none'; // Hide the placeholder content
+        };
+        // Read the selected file and trigger onload
+        reader.readAsDataURL(event.target.files[0]);
+    });
+});
+</script>
+
 {% endblock %}

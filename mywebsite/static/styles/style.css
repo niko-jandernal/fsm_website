@@ -5,9 +5,6 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-
-
-
 .sidebar{
     position: fixed ;
     top: 0;
@@ -144,3 +141,44 @@
     width: calc(100% - 80px);
     padding: 1rem;
 }
+
+.search-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+}
+
+.search-container form {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+.search-container input[type=text] {
+    padding: 6px;
+    font-size: 17px;
+    border: none;
+    width: 90%;
+}
+
+.search-container button {
+    padding: 6px 10px;
+    background: #5E679F;
+    font-size: 17px;
+    border: none;
+    cursor: pointer;
+    width: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-container button:hover {
+    background: #545c8e;
+}
+
+

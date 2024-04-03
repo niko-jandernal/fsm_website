@@ -1,8 +1,10 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', views.home), # This is the default page (home page of the website)
+    path('', views.home),# This is the default page (home page of the website)
     path('home', views.home, name='home'),
     path('explore', views.explore, name='explore'),
     path('notifications', views.notifications, name='notifications'),
@@ -16,5 +18,7 @@ urlpatterns = [
     path('logout', views.logoutUser, name='logout'),
 
 
-
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

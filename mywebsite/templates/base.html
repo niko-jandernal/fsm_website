@@ -15,12 +15,25 @@
 
 <body>
 
+    <div class="search-container">
+        <form action="/search" method="get">
+            <label>
+                <input type="text" placeholder="Search.." name="search">
+            </label>
+            <button type="submit">
+                <i class="bx bx-search"></i>
+            </button>
+        </form>
+    </div>
+
+
     <div class="sidebar">
         <div class="top">
             <div class="logo">
             </div>
             <i class="bx bx-menu" id="btn"></i>
-        </div>
+    </div>
+
         <div class="user">
             <a href="{% url 'home' %}"><h2>fsm™</h2></a>
             <a href="{% url 'home' %}"><p>Fashion Social Media</p></a>
@@ -128,7 +141,9 @@
             localStorage.setItem('sidebarState', 'closed');
         }
     }
-}
+
+
+    }
 </script>
 
 </html>

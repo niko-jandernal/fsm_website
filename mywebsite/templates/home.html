@@ -1,4 +1,11 @@
 {% extends "base.html" %}  {% block title%} Home  {% endblock %}
 {% block content %}
-<h1>Home Page</h1>
+{% for post in posts %}
+    <div>
+        <img src="{{ post.image.url }}" alt="{{ post.caption }}">
+        <p>{{ post.caption }}</p>
+    </div>
+{% empty %}
+    <p>No posts yet.</p>
+{% endfor %}
 {% endblock %}

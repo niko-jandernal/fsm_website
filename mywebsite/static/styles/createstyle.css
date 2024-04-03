@@ -1,0 +1,178 @@
+.create-post-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    width: 80%;
+    max-width: 1024px;
+    margin: 20px auto;
+    border-radius: 25px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fffaf5;
+    padding: 20px;
+}
+
+.content-wrapper{
+    flex: 1;
+}
+
+.create-post-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.create-post-title {
+    text-align: center;
+    width: 100%;
+    border-bottom: 1px solid #dbdbdb;
+    color: #5d669e;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+    font-size: 24px;
+}
+
+.create-post-body {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.left-panel {
+    width: 640px;
+    max-width: 100%;
+}
+
+.image-upload-label {
+    border-radius: 25px;
+    border: 1px dashed #dbdbdb;
+    text-align: center;
+    overflow: hidden;
+    width: 100%; /* Full width of the parent container */
+    position: relative;
+    cursor: pointer;
+    background-color: #fffcf9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.image-upload-label::before {
+    content: "";
+    display: block;
+    padding-top: 75%;
+}
+
+.image-upload-label input[type='file'] {
+    opacity: 0 ;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    cursor: pointer;
+}
+
+.image-upload-placeholder {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0; /* Hide text for screen readers */
+}
+
+.plus-icon {
+    font-size: 64px;
+    color: #ccc;
+    display: block;
+}
+
+.add-photos-text {
+    display: block;
+    font-size: 24px;
+    color: #ccc;
+    margin-top: 8px;
+}
+
+.image-preview {
+    display: none; /* Initially hide the image preview */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.right-panel {
+    flex-grow: 1;
+    margin-left: 10px;
+    max-width: 100%;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+    font-size: 22px; /* Adjust size as needed */
+    color: #5d669e; /* Adjust color to match your design */
+}
+
+
+/*.username, .current-date {*/
+/*    margin: 0;*/
+/*}*/
+
+.caption-container {
+    margin-top: 20px;
+}
+
+
+
+
+.post-button {
+    align-self: flex-end;
+    margin: 20px;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 15px;
+    background-color: #5d669e;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.post-button:hover {
+    background-color: #545c8e;
+}
+
+/* Additional styles to ensure proper spacing and appearance */
+.create-post-body > *:not(:last-child) {
+    margin-bottom: 20px;
+}
+
+input[type="text"], textarea {
+    text-align: left;
+    overflow: auto;
+    font-size: 16px;
+    line-height: 1.5;
+    min-width: 130%;
+    min-height: 200px;
+    padding: 10px;
+    border: 1px solid #dbdbdb;
+    border-radius: 25px;
+    resize: none;
+    background: #fffaf5;
+}
+
+
+
