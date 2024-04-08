@@ -12,7 +12,6 @@
     height: 100vh;
     width: 80px;
     background: #FFF8F0;
-    transition: all 0.5s ease;
     border-right:solid 1px #e6dfd8;
 }
 
@@ -27,6 +26,7 @@
 }
 
 .sidebar #btn{
+    z-index: 101;
     position: absolute;
     color: #5E679F;
     top: 0.4rem;
@@ -83,6 +83,7 @@
 
 .sidebar p{
     opacity: 0;
+    width: 140px;
 }
 
 .sidebar.active p{
@@ -127,7 +128,7 @@
     opacity: 0;
 }
 
-.sidebar.active .nav-item{
+.sidebar.active .nav-item{  
     opacity: 1;
 }
 
@@ -137,48 +138,69 @@
     min-height: 100vh;
     top: 0;
     left: 80px;
-    transition: all 0.5s ease;
     width: calc(100% - 80px);
     padding: 1rem;
 }
 
-.search-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60%;
+/* Adjust the left property and width of the main content when sidebar is active */
+.sidebar.active ~ .main-content{
+    left: 250px;
+    width: calc(100% - 250px);
 }
 
-.search-container form {
+.search-container {;
+    background-color: transparent; /* Adjust or remove background color if not needed */
+    z-index: 100; /* Ensure it's above the main content but below the sidebar button if necessary */
+    box-shadow: none; /* Remove or adjust box shadow if it looks out of place */
+    position: fixed;
+    top: 15px; /* Adjust if necessary to align with your design */
+    left: 80px; /* Adjust based on the sidebar's width to not overlap with the sidebar toggle */
+    width: calc(100% - 90px); /* Decrease the width to prevent covering the button, adjust the subtracted value as necessary */
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    width: 100%;
-    border-radius: 25px;
-    overflow: hidden;
+    padding: 0 10px; /* Add padding inside the search container for aesthetics */
+    box-sizing: border-box; /* Ensures padding is included in the width calculation */
 }
 
-.search-container input[type=text] {
-    padding: 6px;
-    font-size: 17px;
-    border: none;
-    width: 90%;
+#search-input {
+    flex-grow: 1; /* Allows the input to grow, filling the container */
+    margin-right: 2px; /* Spacing between the input and the search button */
+    width: calc(100% - 90px);
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 2px solid #5E679F;
+    border-right: none;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+    height: 40px;
+
 }
 
-.search-container button {
-    padding: 6px 10px;
+#search-btn {
+    white-space: nowrap; /* Prevents the button text/icon from wrapping */
+    padding: 10px 15px;
     background: #5E679F;
-    font-size: 17px;
+    color: white;
     border: none;
     cursor: pointer;
-    width: 10%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    border-radius: 0 5px 5px 0;
+    height: 40px;
 }
 
-.search-container button:hover {
-    background: #545c8e;
+#search-btn i {
+    font-size: 20px;
 }
+.main-content {
+    padding-top: 60px;
+    transition: padding-top 0.5s ease;
+}
+
+/* Adjust the search container's left and width when sidebar is active */
+.sidebar.active ~ #search-input {
+    left: 250px;
+    width: calc(100% - 260px);
+}
+
 
 

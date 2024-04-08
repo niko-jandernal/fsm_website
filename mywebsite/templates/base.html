@@ -14,17 +14,13 @@
 </head>
 
 <body>
-
-    <div class="search-container">
-        <form action="/search" method="get">
-            <label>
-                <input type="text" placeholder="Search.." name="search">
-            </label>
-            <button type="submit">
-                <i class="bx bx-search"></i>
-            </button>
-        </form>
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search users..." onkeyup="searchUsers()">
+            <button type="submit" id="search-btn"><i class='bx bx-search'></i></button>
+        </div>
     </div>
+
 
 
     <div class="sidebar">
@@ -122,6 +118,10 @@
     }
 
     window.onload = function() {
+        setTimeout(function() {
+            document.querySelector('.sidebar').style.transition = 'all 0.5s ease';
+            document.querySelector('.main-content').style.transition = 'all 0.5s ease';
+        }, 1000);
 
     // Check local storage on page load
     let sidebarState = localStorage.getItem('sidebarState');
