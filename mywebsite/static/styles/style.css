@@ -130,6 +130,7 @@
 
 .sidebar.active .nav-item{  
     opacity: 1;
+    width: 260px;
 }
 
 .main-content{
@@ -139,33 +140,34 @@
     top: 0;
     left: 80px;
     width: calc(100% - 80px);
-    padding: 1rem;
+    padding: 60px 1rem 1rem;
+    transition: padding-top 0.5s ease;
 }
 
-/* Adjust the left property and width of the main content when sidebar is active */
+
 .sidebar.active ~ .main-content{
     left: 250px;
     width: calc(100% - 250px);
 }
 
 .search-container {;
-    background-color: transparent; /* Adjust or remove background color if not needed */
-    z-index: 100; /* Ensure it's above the main content but below the sidebar button if necessary */
-    box-shadow: none; /* Remove or adjust box shadow if it looks out of place */
+    background-color: transparent;
+    z-index: 100;
+    box-shadow: none;
     position: fixed;
-    top: 15px; /* Adjust if necessary to align with your design */
-    left: 80px; /* Adjust based on the sidebar's width to not overlap with the sidebar toggle */
-    width: calc(100% - 90px); /* Decrease the width to prevent covering the button, adjust the subtracted value as necessary */
+    top: 15px;
+    left: 250px;
+    width:83%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 10px; /* Add padding inside the search container for aesthetics */
-    box-sizing: border-box; /* Ensures padding is included in the width calculation */
+    padding: 0 10px;
+    box-sizing: border-box;
 }
 
 #search-input {
-    flex-grow: 1; /* Allows the input to grow, filling the container */
-    margin-right: 2px; /* Spacing between the input and the search button */
+    flex-grow: 1;
+    margin-right: 2px;
     width: calc(100% - 90px);
     padding: 10px 20px;
     font-size: 16px;
@@ -174,11 +176,10 @@
     border-radius: 5px 0 0 5px;
     outline: none;
     height: 40px;
-
 }
 
 #search-btn {
-    white-space: nowrap; /* Prevents the button text/icon from wrapping */
+    white-space: nowrap;
     padding: 10px 15px;
     background: #5E679F;
     color: white;
@@ -191,15 +192,39 @@
 #search-btn i {
     font-size: 20px;
 }
-.main-content {
-    padding-top: 60px;
-    transition: padding-top 0.5s ease;
+
+.user-info {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #333; /* Adjust the text color as needed */
 }
 
-/* Adjust the search container's left and width when sidebar is active */
-.sidebar.active ~ #search-input {
-    left: 250px;
-    width: calc(100% - 260px);
+.user-icon {
+    width: 40px; /* Adjust the size as needed */
+    height: 40px;
+    margin-left: 8px;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* Makes the icon background a circle */
+    background-color: #e6dfd8; /* Adjust the background color as needed */
+}
+
+.user-icon i {
+    font-size: 24px; /* Adjust icon size inside the circle */
+    color: #666; /* Adjust the icon color as needed */
+}
+
+.user-name {
+    font-weight: bold; /* Adjust as needed */
+    font-size: 16px; /* Adjust the font size as needed */
+    color: #5E679F; /* Adjust the text color as needed */
+    white-space: nowrap; /* Prevents the name from wrapping */
+    overflow: hidden; /* Ensures text overflow is hidden */
+    text-overflow: ellipsis; /* Adds an ellipsis to overflowed content */
+    max-width: 150px; /* Adjust based on the available space */
 }
 
 

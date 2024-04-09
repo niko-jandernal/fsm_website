@@ -16,8 +16,14 @@
 <body>
     <div class="container">
         <div class="search-container">
-            <input type="text" id="search-input" placeholder="Search users..." onkeyup="searchUsers()">
+            <input type="text" id="search-input" placeholder="Search users...">
             <button type="submit" id="search-btn"><i class='bx bx-search'></i></button>
+            <div class="user-info">
+                <div class="user-icon"><i class='bx bx-user'></i></div>
+                <div class="user-name">
+                    {% if request.user.is_authenticated %}{{ request.user }}{% else %}Guest{% endif %}
+                </div>
+            </div>
         </div>
     </div>
 
@@ -35,18 +41,18 @@
             <a href="{% url 'home' %}"><p>Fashion Social Media</p></a>
         </div>
         <ul>
-            <li>
-                <a href="">
-                    <i class='bx bx-user' ></i>
-                    <span class="nav-item">
-                        {% if request.user.is_authenticated %}
-                            Welcome, {{ request.user }}
-                        {% else %}
-                            Welcome, User
-                        {% endif %}
-                    </span>
-                </a>
-            </li>
+{#            <li>#}
+{#                <a href="">#}
+{#                    <i class='bx bx-user' ></i>#}
+{#                    <span class="nav-item">#}
+{#                        {% if request.user.is_authenticated %}#}
+{#                            Welcome, {{ request.user }}#}
+{#                        {% else %}#}
+{#                            Welcome, User#}
+{#                        {% endif %}#}
+{#                    </span>#}
+{#                </a>#}
+{#            </li>#}
             <li>
                 <a href="{% url 'explore' %}" >
                     <i class='bx bx-compass'></i>
@@ -121,7 +127,7 @@
         setTimeout(function() {
             document.querySelector('.sidebar').style.transition = 'all 0.5s ease';
             document.querySelector('.main-content').style.transition = 'all 0.5s ease';
-        }, 1000);
+        }, 400);
 
     // Check local storage on page load
     let sidebarState = localStorage.getItem('sidebarState');
