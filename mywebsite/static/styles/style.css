@@ -167,11 +167,10 @@
 
 #search-input {
     flex-grow: 1;
-    margin-right: 2px;
     width: calc(100% - 90px);
     padding: 10px 20px;
     font-size: 16px;
-    border: 2px solid #5E679F;
+    border: 1px solid #5E679F;
     border-right: none;
     border-radius: 5px 0 0 5px;
     outline: none;

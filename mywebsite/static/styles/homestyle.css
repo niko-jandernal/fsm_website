@@ -1,0 +1,148 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+.post {
+    background-color: #fff;
+    border: 1px solid #dbdbdb;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.post-image img {
+    width: 100%;
+    display: block;
+}
+
+.post-caption {
+    padding: 10px 15px;
+}
+
+.post-caption p {
+    margin: 0;
+    color: #262626;
+    font-size: 14px;
+}
+.post-user {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    position: relative;
+}
+
+.post-date {
+    padding: 0 15px 10px;
+    font-size: 12px;
+    color: #8e8e8e;
+}
+
+/* General styles for the post */
+.post {
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    border: 1px solid #dbdbdb;
+    margin-bottom: 24px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Styles for the user info and icons */
+.post-user {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+}
+
+.user-icon i {
+    font-size: 24px;
+}
+
+.user-name {
+    font-weight: bold;
+    margin-left: 8px;
+}
+
+/* Styles for the post caption, including username */
+.post-caption p:first-child {
+    font-weight: bold;
+    display: inline;
+}
+
+.post-caption {
+    padding: 0 16px;
+    margin-bottom: 8px;
+}
+
+/* Styles for the like button and like counter */
+.like-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+}
+
+.like-btn.liked i,
+.like-btn:hover i {
+    color: #e74c3c;
+}
+
+.like-btn i {
+    margin-right: 8px;
+}
+
+#like-count-{'{ post.id }'} {
+    margin-left: 16px;
+}
+
+/* Styles for the comment form and comments section */
+#comment-form {
+    display: flex;
+    padding: 8px 16px;
+    align-items: center;
+}
+
+#comment-textarea {
+    flex-grow: 1;
+    margin-right: 8px;
+    border: 1px solid #dbdbdb;
+    border-radius: 16px;
+    padding: 8px;
+
+}
+
+#comments-section {
+    padding: 8px 16px;
+}
+
+.comment {
+    margin-bottom: 8px;
+}
+
+.like-btn i,
+#comment-form button {
+    font-size: 32px;
+}
+
+#comment-form button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.like-btn.liked i {
+    color: #ed4956;
+}
+
+.comment small {
+    color: #8e8e8e;
+}

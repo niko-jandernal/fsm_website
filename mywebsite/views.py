@@ -1,11 +1,16 @@
-from django.shortcuts import render, redirect
-from .forms import CreateUserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render, redirect
+
+from .forms import CreateUserForm
 from .forms import PostForm
+from .models import Comment
 from .models import Post
-from datetime import datetime
+
+
 
 
 def register(request):
@@ -56,8 +61,45 @@ def logoutUser(request):
 
 @login_required(login_url="login")
 def home(request):
-    posts = Post.objects.all()
+    posts = Post.objects.all().order_by('-date_posted')# Get posts ordered by date
+
+    for post in posts:
+        post.is_liked = post.likes.filter(id=request.user.id).exists()
     return render(request, 'home.html', {'posts': posts})
+
+
+@login_required(login_url="login")
+def like_post(request, post_id):
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        post = get_object_or_404(Post, id=post_id)
+        if post.likes.filter(id=request.user.id).exists():
+            post.likes.remove(request.user)
+            is_liked = False
+        else:
+            post.likes.add(request.user)
+            is_liked = True
+        return JsonResponse({"total_likes": post.likes.count(), "is_liked": is_liked})
+    else:
+        return JsonResponse({"error": "There was an error, please try again."}, status=400)
+
+
+@login_required(login_url="login")
+def post_comment(request, post_id):
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' and request.method == "POST":
+        post = get_object_or_404(Post, id=post_id)
+        content = request.POST.get('comment')
+        if content:
+            comment = Comment.objects.create(post=post, author=request.user, content=content)
+            # Customize the response as needed
+            return JsonResponse({"comment": content, "author": request.user.username, "date_posted": comment.date_posted.strftime('%Y-%m-%d %H:%M')})
+        else:
+            return JsonResponse({"error": "Comment content is empty"}, status=400)
+    else:
+        return JsonResponse({"error": "There was an error, please try again."}, status=400)
+
+def post_detail(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    return render(request, 'home.html', {'post': post})
 
 
 @login_required(login_url="login")
@@ -91,7 +133,6 @@ def news(request):
 
 @login_required(login_url="login")
 def create(request):
-
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
@@ -101,7 +142,5 @@ def create(request):
             return redirect('home')
     else:
         form = PostForm()
-
-
 
     return render(request, 'create.html', {'form': form})
