@@ -1,4 +1,4 @@
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
 * {
     margin: 0;
     padding: 0;
@@ -7,14 +7,14 @@
 
 
 .post {
-    background-color: #fff;
-    border: 1px solid #dbdbdb;
+    background-color: #fffdfb;
+    border: 1px solid #e6dfd8;
     margin: 20px auto;
     width: 90%;
     max-width: 600px;
-    border-radius: 8px;
+    border-radius: 25px;
     overflow: hidden;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .post-image img {
@@ -27,9 +27,10 @@
 }
 
 .post-caption p {
-    margin: 0;
+    display: inline-block;
+    margin-right: 8px;
     color: #262626;
-    font-size: 14px;
+    font-size: 15px;
 }
 .post-user {
     display: flex;
@@ -44,17 +45,12 @@
     color: #8e8e8e;
 }
 
-/* General styles for the post */
+
 .post {
-    font-family: Arial, sans-serif;
-    background-color: #fff;
-    border: 1px solid #dbdbdb;
-    margin-bottom: 24px;
-    border-radius: 8px;
-    overflow: hidden;
+
 }
 
-/* Styles for the user info and icons */
+
 .post-user {
     display: flex;
     align-items: center;
@@ -70,7 +66,7 @@
     margin-left: 8px;
 }
 
-/* Styles for the post caption, including username */
+
 .post-caption p:first-child {
     font-weight: bold;
     display: inline;
@@ -81,12 +77,20 @@
     margin-bottom: 8px;
 }
 
-/* Styles for the like button and like counter */
+
 .like-btn {
     background: none;
     border: none;
     cursor: pointer;
     padding: 8px 16px;
+    display: flex;
+    align-items: center;
+}
+
+.comment-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
     display: flex;
     align-items: center;
 }
@@ -104,7 +108,13 @@
     margin-left: 16px;
 }
 
-/* Styles for the comment form and comments section */
+.post-interactions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+}
+
 #comment-form {
     display: flex;
     padding: 8px 16px;
@@ -112,6 +122,8 @@
 }
 
 #comment-textarea {
+    resize: none;
+    width: 27rem;
     flex-grow: 1;
     margin-right: 8px;
     border: 1px solid #dbdbdb;
@@ -121,11 +133,16 @@
 }
 
 #comments-section {
-    padding: 8px 16px;
+    padding: 0 16px 8px;
 }
 
 .comment {
     margin-bottom: 8px;
+}
+
+.comment p{
+    display: inline-block;
+    margin-right: 8px;
 }
 
 .like-btn i,
@@ -143,6 +160,35 @@
     color: #ed4956;
 }
 
-.comment small {
+.comment small{
+    display: block;
+    margin-top: 4px;
+    font-size: 0.75rem;
     color: #8e8e8e;
 }
+
+.bold{
+    font-weight: bold;
+}
+
+.hidden{
+    display: none;
+}
+
+.toggle-comments {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    color: #8e8e8e;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.toggle-comments:hover {
+    color: #727272;
+    text-decoration: none;
+}
+
+

@@ -65,6 +65,9 @@ def home(request):
 
     for post in posts:
         post.is_liked = post.likes.filter(id=request.user.id).exists()
+        post.comments_list = post.comments.all().order_by('-date_posted')  # Newest comments first
+        post.has_more_comments = post.comments.count() > 2
+        post.total_comments = post.comments.count()
     return render(request, 'home.html', {'posts': posts})
 
 
@@ -90,7 +93,7 @@ def post_comment(request, post_id):
         content = request.POST.get('comment')
         if content:
             comment = Comment.objects.create(post=post, author=request.user, content=content)
-            # Customize the response as needed
+
             return JsonResponse({"comment": content, "author": request.user.username, "date_posted": comment.date_posted.strftime('%Y-%m-%d %H:%M')})
         else:
             return JsonResponse({"error": "Comment content is empty"}, status=400)

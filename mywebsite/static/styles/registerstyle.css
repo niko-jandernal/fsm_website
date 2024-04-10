@@ -74,20 +74,20 @@ form input[type="submit"]:hover {
 }
 
 .error-message {
-    background-color: #ffcccc; /* light red background */
-    color: #cc0000; /* dark red text */
-    padding: 5px; /* some padding */
-    margin: 2px 0; /* some margin */
-    border-radius: 5px; /* rounded corners */
-    border: 1px solid #cc0000; /* dark red border */
+    background-color: #ffcccc;
+    color: #cc0000;
+    padding: 5px;
+    margin: 2px 0;
+    border-radius: 5px;
+    border: 1px solid #cc0000;
 
 }
 
 .success-message {
-    background-color: #ccffcc; /* light green background */
-    color: #009900; /* dark green text */
-    padding: 5px; /* some padding */
-    margin: 2px 0; /* some margin */
-    border-radius: 5px; /* rounded corners */
-    border: 1px solid #009900; /* dark green border */
+    background-color: #ccffcc;
+    color: #009900;
+    padding: 5px;
+    margin: 2px 0;
+    border-radius: 5px;
+    border: 1px solid #009900;
 }

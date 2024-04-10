@@ -2,61 +2,65 @@
 {% block title%} Home  {% endblock %}
 {% block content %}
 
-    <link rel="stylesheet" href="../static/styles/homestyle.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
+<link rel="stylesheet" href="../static/styles/homestyle.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
 {% for post in posts %}
-    <div class="post">
-        <div class="post-user">
-            <div class="user-info">
-                <div class="user-icon"><i class='bx bx-user'></i></div>
-                <div class="user-name">
-                    {{ post.user.username }}
-                </div>
+<div class="post">
+    <div class="post-user">
+        <div class="user-info">
+            <div class="user-icon"><i class='bx bx-user'></i></div>
+            <div class="user-name">
+                {{ post.user.username }}
             </div>
         </div>
-        <div class="post-image">
-            <img src="{{ post.image.url }}" alt="{{ post.caption }}">
-        </div>
-        <div class="post-caption">
-            <p>{{ post.user.username }}</p>
-            <p>{{ post.caption }}</p>
-        </div>
+    </div>
+    <div class="post-image">
+        <img src="{{ post.image.url }}" alt="{{ post.caption }}">
+    </div>
+    <div class="post-caption">
+        <p>{{ post.user.username }}</p>
+        <p>{{ post.caption }}</p>
+    </div>
 
-        <button class="like-btn" data-post-id="{{ post.id }}" id="like-btn-{{ post.id }}">
-            {% if post.is_liked %}
-                <i class='bx bxs-heart' ></i>
-            {% else %}
-                <i class='bx bx-heart' ></i>
-            {% endif %}
-            <p id="like-count-{{ post.id }}">{{ post.likes.count }}</p>
+    <div class="post-interactions">
+    <button class="like-btn" data-post-id="{{ post.id }}" id="like-btn-{{ post.id }}">
+        {% if post.is_liked %}
+            <i class='bx bxs-heart' ></i>
+        {% else %}
+            <i class='bx bx-heart' ></i>
+        {% endif %}
+        <p id="like-count-{{ post.id }}">{{ post.likes.count }}</p>
+    </button>
+
+    <form id="comment-form" data-post-id="{{ post.id }}">
+        {% csrf_token %}
+        <textarea id="comment-textarea" name="comment" placeholder="Write a comment..."></textarea>
+        <button type="submit" class="comment-btn">
+            <i class='bx bx-paper-plane'></i>
         </button>
-
-        <form id="comment-form" data-post-id="{{ post.id }}">
-            {% csrf_token %}
-            <textarea id="comment-textarea" name="comment" placeholder="Write a comment..."></textarea>
-            <button type="submit" class="comment-btn">
-                <i class='bx bx-paper-plane'></i>
-            </button>
-        </form>
-        <div id="comments-section">
-            {% for comment in post.comments.all %}
-                <div class="comment">
-                    <p>{{ comment.author }}  {{ comment.content }}</p>
-                    <small>{{ comment.date_posted|timesince }} ago</small>
-                </div>
-            {% endfor %}
-        </div>
-        <div class="post-date">
-            <p>{{ post.date_posted|timesince}} ago</p>
-        </div>
-     </div>
-
-{% empty %}
-    <p>No posts yet.</p>
+    </form>
+    </div>
+    <div id="comments-section">
+        {% for comment in post.comments.all %}
+            <div class="comment {% if forloop.counter > 2 %} extra-comment hidden {% endif %}">
+                <p class="bold">{{ comment.author }}</p> <p>{{ comment.content }}</p>
+                <small>{{ comment.date_posted|timesince }} ago</small>
+            </div>
+        {% endfor %}
+        {% if post.comments.count > 2 %}
+            <a href="#" class="toggle-comments" data-expanded="false" data-total-comments="{{ post.comments.count }}">View all {{ post.comments.count }} comments</a>
+        {% endif %}
+    </div>
+    <div class="post-date">
+        <p>{{ post.date_posted|timesince}} ago</p>
+    </div>
+</div>
 {% endfor %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
 <script>
 $(document).ready(function(){
@@ -89,6 +93,29 @@ $(document).ready(function(){
         });
     });
 });
+
+
+$(document).ready(function(){
+    $('.toggle-comments').click(function(e){
+        e.preventDefault();
+        const isExpanded = $(this).data('expanded') === 'true';
+        const totalComments = $(this).data('total-comments');
+        if (isExpanded) {
+            // Collapse comments: Hide comments except for the first two
+            $('.comment.extra-comment').addClass('hidden');
+            $(this).text(`View all ${totalComments} comments`).data('expanded', 'false');
+        } else {
+            // Expand comments: Show all comments
+            $('.comment.extra-comment').removeClass('hidden');
+            $(this).text('View Less').data('expanded', 'true');
+        }
+    });
+});
+
+
+
+
+
 
 
 $(document).ready(function(){
