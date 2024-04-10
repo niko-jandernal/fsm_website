@@ -16,8 +16,10 @@
 <body>
     <div class="container">
         <div class="search-container">
-            <input type="text" id="search-input" placeholder="Search users...">
-            <button type="submit" id="search-btn"><i class='bx bx-search'></i></button>
+            <form action="{% url 'search_users' %}" method="get">
+                <input type="text" name="q" id="search-input" placeholder="Search users...">
+                <button type="submit" id="search-btn"><i class='bx bx-search'></i></button>
+            </form>
             <div class="user-info">
                 <div class="user-icon"><i class='bx bx-user'></i></div>
                 <div class="user-name">
@@ -41,18 +43,6 @@
             <a href="{% url 'home' %}"><p>Fashion Social Media</p></a>
         </div>
         <ul>
-{#            <li>#}
-{#                <a href="">#}
-{#                    <i class='bx bx-user' ></i>#}
-{#                    <span class="nav-item">#}
-{#                        {% if request.user.is_authenticated %}#}
-{#                            Welcome, {{ request.user }}#}
-{#                        {% else %}#}
-{#                            Welcome, User#}
-{#                        {% endif %}#}
-{#                    </span>#}
-{#                </a>#}
-{#            </li>#}
             <li>
                 <a href="{% url 'explore' %}" >
                     <i class='bx bx-compass'></i>
@@ -120,9 +110,7 @@
 
     btn.onclick = function() {
         sidebar.classList.toggle('active')
-
     }
-
     window.onload = function() {
         setTimeout(function() {
             document.querySelector('.sidebar').style.transition = 'all 0.5s ease';

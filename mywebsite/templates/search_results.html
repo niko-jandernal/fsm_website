@@ -1,4 +1,21 @@
-{% extends "base.html" %}  {% block title%} Search Results {% endblock %}
+{% extends "base.html" %}
+{% block title %}Search Results{% endblock %}
 {% block content %}
-<h1>Search Results</h1>
+        <link rel="stylesheet" href="../static/styles/search_results_style.css">
+    <h2 class="title">Search Results</h2>
+    <div class="search-results1">
+        {% for user in users %}
+
+            <div class="user-info1">
+                <div class="user-icon1"><i class='bx bx-user'></i></div>
+                <div class="user-name-date-container">
+                    <div class="user-name1">{{ user.username }}</div>
+                    <div class="user-date1">Joined: {{ user.date_joined|date:"j F, Y" }}</div>
+                </div>
+            </div>
+
+        {% empty %}
+            <p>No users found.</p>
+        {% endfor %}
+    </div>
 {% endblock %}

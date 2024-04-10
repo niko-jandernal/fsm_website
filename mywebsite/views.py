@@ -9,6 +9,9 @@ from .forms import CreateUserForm
 from .forms import PostForm
 from .models import Comment
 from .models import Post
+from django.contrib.auth.models import User
+from django.db.models import Q
+
 
 
 
@@ -103,6 +106,19 @@ def post_comment(request, post_id):
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     return render(request, 'home.html', {'post': post})
+
+
+def search_users(request):
+    query = request.GET.get('q', '')
+    if query:
+        users = User.objects.filter(
+            Q(username__icontains=query) |
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query)
+        ).order_by('-date_joined')
+    else:
+        users = User.objects.none()
+    return render(request, 'search_results.html', {'users': users})
 
 
 @login_required(login_url="login")
