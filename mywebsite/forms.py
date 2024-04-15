@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Post
+from .models import Post, DiscussionPost
 
 
 class CreateUserForm(UserCreationForm):
@@ -20,3 +20,9 @@ class PostForm(forms.ModelForm):
                                               },
                                        ),
         }
+
+
+class DiscussionPostForm(forms.ModelForm):
+    class Meta:
+        model = DiscussionPost
+        fields = ['title', 'content']

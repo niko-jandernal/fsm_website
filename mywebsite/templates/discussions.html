@@ -1,4 +1,23 @@
-{% extends "base.html" %}  {% block title%} Discussions {% endblock %}
+{% extends 'base.html' %}
 {% block content %}
-<h1>Discussions</h1>
+<h2>Discussions</h2>
+
+    <link rel="stylesheet" href="../static/styles/discussionsstyle.css">
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Post</button>
+</form>
+
+
+<div class="discussion-posts">
+    {% for post in discussion_posts %}
+    <div class="discussion-post">
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.content }}</p>
+        <small>Posted by {{ post.author.username }} on {{ post.date_posted }}</small>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

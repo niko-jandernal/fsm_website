@@ -7,11 +7,12 @@ from django.shortcuts import render, redirect
 
 from .forms import CreateUserForm
 from .forms import PostForm
+from .forms import DiscussionPostForm
 from .models import Comment
 from .models import Post
+from .models import DiscussionPost
 from django.contrib.auth.models import User
 from django.db.models import Q
-
 
 
 
@@ -64,7 +65,7 @@ def logoutUser(request):
 
 @login_required(login_url="login")
 def home(request):
-    posts = Post.objects.all().order_by('-date_posted')# Get posts ordered by date
+    posts = Post.objects.all().order_by('-date_posted')  # Get posts ordered by date
 
     for post in posts:
         post.is_liked = post.likes.filter(id=request.user.id).exists()
@@ -81,10 +82,12 @@ def like_post(request, post_id):
         if post.likes.filter(id=request.user.id).exists():
             post.likes.remove(request.user)
             is_liked = False
+
         else:
             post.likes.add(request.user)
             is_liked = True
         return JsonResponse({"total_likes": post.likes.count(), "is_liked": is_liked})
+
     else:
         return JsonResponse({"error": "There was an error, please try again."}, status=400)
 
@@ -97,11 +100,14 @@ def post_comment(request, post_id):
         if content:
             comment = Comment.objects.create(post=post, author=request.user, content=content)
 
-            return JsonResponse({"comment": content, "author": request.user.username, "date_posted": comment.date_posted.strftime('%Y-%m-%d %H:%M')})
+            return JsonResponse({"comment": content, "author": request.user.username,
+                                 "date_posted": comment.date_posted.strftime('%Y-%m-%d %H:%M')})
+        
         else:
             return JsonResponse({"error": "Comment content is empty"}, status=400)
     else:
         return JsonResponse({"error": "There was an error, please try again."}, status=400)
+
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -124,11 +130,6 @@ def search_users(request):
 @login_required(login_url="login")
 def explore(request):
     return render(request, "explore.html")
-
-
-@login_required(login_url="login")
-def notifications(request):
-    return render(request, "notifications.html")
 
 
 @login_required(login_url="login")
@@ -163,3 +164,19 @@ def create(request):
         form = PostForm()
 
     return render(request, 'create.html', {'form': form})
+
+
+@login_required(login_url="login")
+def discussions(request):
+    if request.method == 'POST':
+        form = DiscussionPostForm(request.POST)
+        if form.is_valid():
+            discussion_post = form.save(commit=False)
+            discussion_post.author = request.user
+            discussion_post.save()
+            return redirect('discussions')
+    else:
+        form = DiscussionPostForm()
+    discussion_posts = DiscussionPost.objects.all().order_by('-date_posted')
+    return render(request, 'discussions.html', {'form': form, 'discussion_posts': discussion_posts})
+

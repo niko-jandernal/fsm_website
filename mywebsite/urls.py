@@ -8,7 +8,6 @@ urlpatterns = [
     path('', views.home),  # This is the default page (home page of the website)
     path('home', views.home, name='home'),
     path('explore', views.explore, name='explore'),
-    path('notifications', views.notifications, name='notifications'),
     path('boards', views.boards, name='boards'),
     path('polls', views.polls, name='polls'),
     path('discussions', views.discussions, name='discussions'),

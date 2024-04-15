@@ -123,21 +123,13 @@
     align-items: center;
     gap: 10px;
     text-align: left;
-    font-size: 22px; /* Adjust size as needed */
-    color: #5d669e; /* Adjust color to match your design */
+    font-size: 22px;
+    color: #5d669e;
 }
-
-
-/*.username, .current-date {*/
-/*    margin: 0;*/
-/*}*/
 
 .caption-container {
     margin-top: 20px;
 }
-
-
-
 
 .post-button {
     align-self: flex-end;
@@ -165,13 +157,11 @@ input[type="text"], textarea {
     overflow: auto;
     font-size: 16px;
     line-height: 1.5;
-    /*min-width: 130%;*/
-    /*min-height: 200px;*/
     padding: 10px;
     border: 1px solid #dbdbdb;
     border-radius: 25px;
     resize: none;
-    background: #fffaf5;
+    /*background: #fffaf5;*/
 }
 
 
