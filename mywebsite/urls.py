@@ -3,6 +3,7 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import like_post, post_comment, search_users
+from .views import discussions
 
 urlpatterns = [
     path('', views.home),  # This is the default page (home page of the website)
@@ -21,6 +22,10 @@ urlpatterns = [
     path('post/<int:post_id>/like/', like_post, name='like_post'),
     path('post/<int:post_id>/comment/', post_comment, name='post_comment'),
     path('search/', search_users, name='search_users'),
+
+    path('discussions/', discussions, name='discussions'),
+    path('discussions/like/<int:post_id>/', like_post, name='like_post'),
+    path('discussions/comment/<int:post_id>/', post_comment, name='post_comment'),
 
 ]
 

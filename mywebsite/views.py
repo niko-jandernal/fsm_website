@@ -11,10 +11,9 @@ from .forms import DiscussionPostForm
 from .models import Comment
 from .models import Post
 from .models import DiscussionPost
+from .models import DiscussionComment
 from django.contrib.auth.models import User
 from django.db.models import Q
-
-
 
 
 def register(request):
@@ -102,7 +101,7 @@ def post_comment(request, post_id):
 
             return JsonResponse({"comment": content, "author": request.user.username,
                                  "date_posted": comment.date_posted.strftime('%Y-%m-%d %H:%M')})
-        
+
         else:
             return JsonResponse({"error": "Comment content is empty"}, status=400)
     else:
@@ -142,11 +141,6 @@ def polls(request):
     return render(request, "polls.html")
 
 
-@login_required(login_url="login")
-def discussions(request):
-    return render(request, "discussions.html")
-
-
 def news(request):
     return render(request, "news.html")
 
@@ -180,3 +174,23 @@ def discussions(request):
     discussion_posts = DiscussionPost.objects.all().order_by('-date_posted')
     return render(request, 'discussions.html', {'form': form, 'discussion_posts': discussion_posts})
 
+
+@login_required(login_url="login")
+def post_comment(request, post_id):
+    post = get_object_or_404(DiscussionPost, id=post_id)
+    if request.method == 'POST':
+        comment_content = request.POST.get('comment')
+        if comment_content:
+            DiscussionComment.objects.create(post=post, author=request.user, content=comment_content)
+            return redirect('discussions')
+    return render(request, 'discussions.html')
+
+
+@login_required(login_url="login")
+def like_post(request, post_id):
+    post = get_object_or_404(DiscussionPost, id=post_id)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+    return redirect('discussions')
