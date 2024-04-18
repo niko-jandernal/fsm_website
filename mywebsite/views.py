@@ -15,6 +15,9 @@ from .models import DiscussionComment
 from django.contrib.auth.models import User
 from django.db.models import Q
 
+from .models import Poll, Choice, Poll_Comment
+from .forms import PollForm, PollCommentForm
+
 
 def register(request):
     if request.user.is_authenticated:
@@ -136,11 +139,6 @@ def boards(request):
     return render(request, "boards.html")
 
 
-@login_required(login_url="login")
-def polls(request):
-    return render(request, "polls.html")
-
-
 def news(request):
     return render(request, "news.html")
 
@@ -194,3 +192,76 @@ def like_post(request, post_id):
     else:
         post.likes.add(request.user)
     return redirect('discussions')
+
+
+@login_required(login_url="login")
+def create_poll(request):
+    if request.method == 'POST':
+        form = PollForm(request.POST)
+        if form.is_valid():
+            poll = form.save(commit=False)
+            poll.created_by = request.user
+            poll.save()
+            for i in range(1, 5):  # Assuming we allow up to 4 choices per poll for simplicity
+                choice_text = request.POST.get(f'choice{i}', '').strip()
+                if choice_text:
+                    Choice.objects.create(poll=poll, choice_text=choice_text)
+            return redirect('view_polls')
+    else:
+        form = PollForm()
+    return render(request, 'create_poll.html', {'form': form})
+
+
+
+def view_polls(request):
+    polls = Poll.objects.all()
+    poll_data = []
+    comment_form = PollCommentForm()  # Instantiate your comment form here
+
+    for poll in polls:
+        form = PollCommentForm()
+        choices = poll.choices.all()
+        total_votes = sum(choice.vote_count for choice in choices)
+        results = [{'choice_text': choice.choice_text, 'percentage': (choice.vote_count / total_votes) * 100 if total_votes > 0 else 0} for choice in choices]
+        poll_data.append({'poll': poll, 'results': results, 'comment_form': comment_form})
+
+    return render(request, 'view_polls.html', {'poll_data': poll_data})
+
+
+
+@login_required(login_url="login")
+def vote(request, poll_id):
+    poll = get_object_or_404(Poll, pk=poll_id)
+    try:
+        selected_choice = poll.choices.get(pk=request.POST['vote'])
+    except (KeyError, Choice.DoesNotExist):
+        # Handle the error case; perhaps redirect back to the poll with a message
+        return render(request, 'view_polls.html', {
+            'poll': poll,
+            'error_message': "You didn't select a choice or an invalid choice was made.",
+        })
+    else:
+        selected_choice.vote_count += 1
+        selected_choice.save()
+
+        return redirect('view_polls')
+
+
+@login_required(login_url="login")
+def add_comment(request, poll_id):
+    poll = get_object_or_404(Poll, pk=poll_id)
+    if request.method == 'POST':
+        form = PollCommentForm(request.POST)
+        if form.is_valid():
+            new_comment = form.save(commit=False)
+            new_comment.poll = poll
+            new_comment.created_by = request.user  # Adjust accordingly if your user setup is different
+            new_comment.save()
+            # Redirect to the 'view_polls' page or a relevant page where you list the polls
+            return redirect('view_polls')
+        else:
+            # Optionally handle form errors here
+            return render(request, 'home.html', {'form': form, 'poll': poll})
+    else:
+        form = PollCommentForm()
+        return render(request, 'view_polls.html', {'form': form, 'poll': poll})

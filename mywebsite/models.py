@@ -39,3 +39,31 @@ class DiscussionComment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.author.username} on {self.post.title}'
+
+
+class Poll(models.Model):
+    question = models.CharField(max_length=200)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.question
+
+
+class Choice(models.Model):
+    poll = models.ForeignKey(Poll, related_name='choices', on_delete=models.CASCADE)
+    choice_text = models.CharField(max_length=100)
+    vote_count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.choice_text
+
+
+class Poll_Comment(models.Model):
+    poll = models.ForeignKey(Poll, related_name='comments', on_delete=models.CASCADE)
+    comment_text = models.TextField()
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.comment_text[:50]  # Show first 50 characters of the comment

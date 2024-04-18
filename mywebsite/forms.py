@@ -2,6 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
 from .models import Post, DiscussionPost
+from .models import Poll, Poll_Comment
 
 
 class CreateUserForm(UserCreationForm):
@@ -26,3 +27,25 @@ class DiscussionPostForm(forms.ModelForm):
     class Meta:
         model = DiscussionPost
         fields = ['title', 'content']
+
+
+class PollForm(forms.ModelForm):
+    class Meta:
+        model = Poll
+        fields = ['question']
+        widgets = {
+            'question': forms.TextInput(attrs={'placeholder': 'Enter your poll question here'}),
+        }
+
+
+class PollCommentForm(forms.ModelForm):
+    class Meta:
+        model = Poll_Comment
+        fields = ['comment_text']
+        widgets = {
+            'comment_text': forms.Textarea(attrs={
+                'placeholder': 'Type your comment here...',
+                'rows': 4,
+                'cols': 40
+            })
+        }
