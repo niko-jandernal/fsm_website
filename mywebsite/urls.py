@@ -4,7 +4,7 @@ from django.urls import path
 
 from . import views
 from .views import discussions, view_polls
-from .views import like_post, post_comment, search_users
+from .views import like_post, post_comment, search_users, discussion_like_post, discussion_post_comment
 
 urlpatterns = [
     path('', views.home),
@@ -24,13 +24,12 @@ urlpatterns = [
     path('search/', search_users, name='search_users'),
 
     path('discussions/', discussions, name='discussions'),
-    path('discussions/like/<int:post_id>/', like_post, name='like_post'),
-    path('discussions/comment/<int:post_id>/', post_comment, name='post_comment'),
+    path('discussions/like/<int:post_id>/', discussion_like_post , name='discussion_like_post'),
+    path('discussions/comment/<int:post_id>/', discussion_post_comment, name='discussion_post_comment'),
 
     path('create_poll/', views.create_poll, name='create_poll'),
     path('view_polls/', view_polls, name='view_polls'),
     path('vote/<int:poll_id>/', views.vote, name='vote'),
-
     path('add_comment/<int:poll_id>/', views.add_comment, name='add_comment')
 
 ]

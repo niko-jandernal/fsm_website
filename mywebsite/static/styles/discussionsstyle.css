@@ -17,6 +17,9 @@
 .discussion-content .discussion-post p {
     font-size: 16px;
     color: #333;
+    display: inline-block;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .discussion-content .discussion-post small {
@@ -25,7 +28,7 @@
 }
 
 .discussion-content form {
-    margin-top: 20px;
+    margin-top: 5px;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -33,18 +36,49 @@
 
 .discussion-content input[type="text"], .discussion-content button {
     padding: 10px;
-    margin-top: 5px;
+    width: 100%;
+    margin-bottom: 5px;
     border-radius: 12px;
     border: 1px solid #dbdbdb;
 }
 
 .discussion-content button {
     background-color: #5E679F;
+    width: 5rem;
+    display: inline;
     color: white;
     cursor: pointer;
     border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px 2px;
+    border-radius: 55px;
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .discussion-content button:hover {
     background-color: #494f7c;
+    box-shadow: 2px 2px 5px grey;
 }
+
+.button-container {
+    display: flex;
+    justify-content: flex-start;
+}
+
+form p textarea {
+    resize: none;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+form p input[type="text"], form p textarea {
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+

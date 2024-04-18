@@ -27,6 +27,10 @@ class DiscussionPostForm(forms.ModelForm):
     class Meta:
         model = DiscussionPost
         fields = ['title', 'content']
+        widgets = {
+            'title': forms.TextInput(attrs={'placeholder': 'Title...'}),
+            'content': forms.Textarea(attrs={'placeholder': 'Enter text here...'}),
+        }
 
 
 class PollForm(forms.ModelForm):

@@ -174,7 +174,7 @@ def discussions(request):
 
 
 @login_required(login_url="login")
-def post_comment(request, post_id):
+def discussion_post_comment(request, post_id):
     post = get_object_or_404(DiscussionPost, id=post_id)
     if request.method == 'POST':
         comment_content = request.POST.get('comment')
@@ -185,7 +185,7 @@ def post_comment(request, post_id):
 
 
 @login_required(login_url="login")
-def like_post(request, post_id):
+def discussion_like_post(request, post_id):
     post = get_object_or_404(DiscussionPost, id=post_id)
     if request.user in post.likes.all():
         post.likes.remove(request.user)

@@ -2,44 +2,44 @@
 
 {% block content %}
     <link rel="stylesheet" href="../static/styles/discussionsstyle.css">
-<h2>Discussions</h2>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<div class="discussion-content">
 
-<!-- Form for creating a new discussion post -->
-<form method="post">
+<form method="post" >
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Post</button>
-</form>
 
-<div class="discussion-content">
     {% for post in discussion_posts %}
-<div class="discussion-post">
-    <h3>{{ post.title }}</h3>
-    <p>{{ post.content }}</p>
-    <small>Posted by {{ post.author.username }} on {{ post.date_posted }}</small>
+    <div class="discussion-post">
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.content }}</p>
+        <small>Posted by {{ post.author.username }} on {{ post.date_posted }}</small>
 
-    <!-- Like Button -->
-    <form action="{% url 'like_post' post.id %}" method="post">
-        {% csrf_token %}
-        <button type="submit">{{ post.likes.count }} Like</button>
-    </form>
+        {% for comment in post.comments.all %}
+            <div class="comment-section ">
+                <strong>{{ comment.author.username }}:</strong> <p>{{ comment.content }}</p>
+            </div>
+        {% endfor %}
 
-    <!-- Display Comments -->
-    {% for comment in post.comments.all %}
-        <div>
-            <strong>{{ comment.author.username }}:</strong>
-            <p>{{ comment.content }}</p>
+        <div class="button-container">
+        <form action="{% url 'discussion_like_post' post.id %}" method="post">
+            {% csrf_token %}
+                <button type="submit">
+                    <i class='bx bxs-heart' ></i>
+                    {{ post.likes.count }}
+                </button>
+
+        </form>
         </div>
-    {% endfor %}
+        <form action="{% url 'discussion_post_comment' post.id %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="comment" placeholder="Add a comment...">
+            <button type="submit"><i class='bx bx-paper-plane'></i></button>
+        </form>
 
-    <!-- Comment Form -->
-    <form action="{% url 'post_comment' post.id %}" method="post">
-        {% csrf_token %}
-        <input type="text" name="comment" placeholder="Add a comment...">
-        <button type="submit">Comment</button>
-    </form>
-</div>
+    </div>
+
 {% endfor %}
-
 </div>
 {% endblock %}
