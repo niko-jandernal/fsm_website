@@ -1,0 +1,50 @@
+.discussion-content .discussion-post {
+    background-color: #fffaf5;
+    border-radius: 25px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 1024px;
+    width: 80%;
+}
+
+.discussion-content .discussion-post h3 {
+    color: #5d669e;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.discussion-content .discussion-post p {
+    font-size: 16px;
+    color: #333;
+}
+
+.discussion-content .discussion-post small {
+    font-size: 14px;
+    color: #666;
+}
+
+.discussion-content form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.discussion-content input[type="text"], .discussion-content button {
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 12px;
+    border: 1px solid #dbdbdb;
+}
+
+.discussion-content button {
+    background-color: #5E679F;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+.discussion-content button:hover {
+    background-color: #494f7c;
+}

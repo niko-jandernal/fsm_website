@@ -11,7 +11,7 @@
     <button type="submit">Post</button>
 </form>
 
-
+<div class="discussion-content">
     {% for post in discussion_posts %}
 <div class="discussion-post">
     <h3>{{ post.title }}</h3>
@@ -41,4 +41,5 @@
 </div>
 {% endfor %}
 
+</div>
 {% endblock %}
