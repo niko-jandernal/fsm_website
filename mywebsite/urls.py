@@ -4,15 +4,16 @@ from django.urls import path
 
 from . import views
 from .views import discussions, view_polls
-from .views import like_post, post_comment, search_users, discussion_like_post, discussion_post_comment, explore
+from .views import like_post, post_comment, search_users, discussion_like_post, discussion_post_comment, explore, news
 
 urlpatterns = [
     path('', views.home),
     path('home', views.home, name='home'),
     path('explore/', explore, name='explore'),
+
     path('boards', views.boards, name='boards'),
     path('discussions', views.discussions, name='discussions'),
-    path('news', views.news, name='news'),
+    path('fashion-news/', news, name='news'),
     path('create', views.create, name='create'),
     path('register', views.register, name='register'),
     path('login', views.loginPage, name='login'),

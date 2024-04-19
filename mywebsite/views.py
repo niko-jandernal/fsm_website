@@ -1,6 +1,7 @@
 import os
 import random
 
+import requests
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -20,6 +21,8 @@ from .models import DiscussionComment
 from .models import DiscussionPost
 from .models import Poll, Choice
 from .models import Post, Vote
+
+api_key = settings.NYT_API_KEY
 
 
 def register(request):
@@ -146,8 +149,22 @@ def boards(request):
     return render(request, "boards.html")
 
 
+def fetch_news(api_key):
+    url = 'https://api.nytimes.com/svc/topstories/v2/fashion.json'
+    params = {'api-key': api_key}
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    return response.json()['results']
+
+
 def news(request):
-    return render(request, "news.html")
+    api_key = 'bLRhFHvkMwMN5npLhFdYbyPPGn1l1KdA'
+    try:
+        news_items = fetch_news(api_key)
+        context = {'news_items': news_items}
+    except requests.HTTPError as e:
+        context = {'error': 'Failed to fetch news: {}'.format(e)}
+    return render(request, 'news.html', context)
 
 
 @login_required(login_url="login")
