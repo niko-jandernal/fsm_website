@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
+        <link rel="stylesheet" href="../static/styles/create_poll.css">
+<div class="poll-content">
 <h2>Create your own Poll</h2>
 <form method="post">
     {% csrf_token %}
@@ -12,4 +14,6 @@
     <input type="text" name="choice4" placeholder="Choice 4"><br>
     <button type="submit">Post</button>
 </form>
+    <a href="{% url 'view_polls' %}" class="btn">View Polls</a>
+</div>
 {% endblock %}

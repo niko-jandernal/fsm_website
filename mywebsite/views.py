@@ -9,7 +9,7 @@ from .forms import CreateUserForm
 from .forms import PostForm
 from .forms import DiscussionPostForm
 from .models import Comment
-from .models import Post
+from .models import Post, Poll, Vote
 from .models import DiscussionPost
 from .models import DiscussionComment
 from django.contrib.auth.models import User
@@ -235,7 +235,6 @@ def vote(request, poll_id):
     try:
         selected_choice = poll.choices.get(pk=request.POST['vote'])
     except (KeyError, Choice.DoesNotExist):
-        # Handle the error case; perhaps redirect back to the poll with a message
         return render(request, 'view_polls.html', {
             'poll': poll,
             'error_message': "You didn't select a choice or an invalid choice was made.",
@@ -255,13 +254,22 @@ def add_comment(request, poll_id):
         if form.is_valid():
             new_comment = form.save(commit=False)
             new_comment.poll = poll
-            new_comment.created_by = request.user  # Adjust accordingly if your user setup is different
+            new_comment.created_by = request.user
             new_comment.save()
-            # Redirect to the 'view_polls' page or a relevant page where you list the polls
             return redirect('view_polls')
         else:
-            # Optionally handle form errors here
             return render(request, 'home.html', {'form': form, 'poll': poll})
     else:
         form = PollCommentForm()
         return render(request, 'view_polls.html', {'form': form, 'poll': poll})
+
+
+def poll_detail(request, poll_id):
+    poll = get_object_or_404(Poll, id=poll_id)
+    has_voted = Vote.objects.filter(poll=poll, voted_by=request.user).exists()
+
+    context = {
+        'poll': poll,
+        'has_voted': has_voted
+    }
+    return render(request, 'view_polls.html', context)

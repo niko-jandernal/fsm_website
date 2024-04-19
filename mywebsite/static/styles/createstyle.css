@@ -50,7 +50,7 @@
     border: 1px dashed #dbdbdb;
     text-align: center;
     overflow: hidden;
-    width: 100%; /* Full width of the parent container */
+    width: 100%;
     position: relative;
     cursor: pointer;
     background-color: #fffcf9;
@@ -85,7 +85,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 0; /* Hide text for screen readers */
+    font-size: 0;
 }
 
 .plus-icon {
@@ -102,7 +102,7 @@
 }
 
 .image-preview {
-    display: none; /* Initially hide the image preview */
+    display: none;
     position: absolute;
     top: 0;
     left: 0;
@@ -136,7 +136,7 @@
     margin: 20px;
     padding: 15px 30px;
     border: none;
-    border-radius: 15px;
+    border-radius: 55px;
     background-color: #5d669e;
     color: white;
     cursor: pointer;
@@ -147,7 +147,7 @@
     background-color: #545c8e;
 }
 
-/* Additional styles to ensure proper spacing and appearance */
+
 .create-post-body > *:not(:last-child) {
     margin-bottom: 20px;
 }

@@ -50,6 +50,6 @@ class PollCommentForm(forms.ModelForm):
             'comment_text': forms.Textarea(attrs={
                 'placeholder': 'Type your comment here...',
                 'rows': 4,
-                'cols': 40
+                'cols': 2
             })
         }

@@ -59,6 +59,12 @@ class Choice(models.Model):
         return self.choice_text
 
 
+class Vote(models.Model):
+    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+    poll = models.ForeignKey(Poll, on_delete=models.CASCADE)
+    voted_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
 class Poll_Comment(models.Model):
     poll = models.ForeignKey(Poll, related_name='comments', on_delete=models.CASCADE)
     comment_text = models.TextField()

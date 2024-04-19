@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Active Polls</h2>
+    <link rel="stylesheet" href="../static/styles/view_poll.css">
+    <div class="button-container">
+    <a href="{% url 'create_poll' %}" class="btn">Create Polls</a>
+</div>
+<div class="poll-content">
+<h2>Polls</h2>
+
 {% for item in poll_data %}
     <div>
         <h3>{{ item.poll.question }}</h3>
@@ -28,7 +34,9 @@
             <button type="submit">Comment</button>
         </form>
     </div>
+
 {% empty %}
     <p>No polls available.</p>
 {% endfor %}
+</div>
 {% endblock %}
