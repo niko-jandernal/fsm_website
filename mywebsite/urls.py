@@ -4,12 +4,12 @@ from django.urls import path
 
 from . import views
 from .views import discussions, view_polls
-from .views import like_post, post_comment, search_users, discussion_like_post, discussion_post_comment
+from .views import like_post, post_comment, search_users, discussion_like_post, discussion_post_comment, explore
 
 urlpatterns = [
     path('', views.home),
     path('home', views.home, name='home'),
-    path('explore', views.explore, name='explore'),
+    path('explore/', explore, name='explore'),
     path('boards', views.boards, name='boards'),
     path('discussions', views.discussions, name='discussions'),
     path('news', views.news, name='news'),
@@ -32,7 +32,7 @@ urlpatterns = [
     path('vote/<int:poll_id>/', views.vote, name='vote'),
     path('add_comment/<int:poll_id>/', views.add_comment, name='add_comment')
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

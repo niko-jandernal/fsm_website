@@ -72,4 +72,11 @@ class Poll_Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.comment_text[:50]  # Show first 50 characters of the comment
+        return self.comment_text[:50]
+
+
+class Image(models.Model):
+    image = models.ImageField(upload_to='images/')
+
+    def __str__(self):
+        return f"Image {self.id}"

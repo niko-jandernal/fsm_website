@@ -1,22 +1,25 @@
+import os
+import random
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 
 from .forms import CreateUserForm
-from .forms import PostForm
 from .forms import DiscussionPostForm
-from .models import Comment
-from .models import Post, Poll, Vote
-from .models import DiscussionPost
-from .models import DiscussionComment
-from django.contrib.auth.models import User
-from django.db.models import Q
-
-from .models import Poll, Choice, Poll_Comment
 from .forms import PollForm, PollCommentForm
+from .forms import PostForm
+from .models import Comment
+from .models import DiscussionComment
+from .models import DiscussionPost
+from .models import Poll, Choice
+from .models import Post, Vote
 
 
 def register(request):
@@ -131,7 +134,11 @@ def search_users(request):
 
 @login_required(login_url="login")
 def explore(request):
-    return render(request, "explore.html")
+    folder_path = os.path.join(settings.MEDIA_ROOT, 'images')
+    images = [os.path.join(settings.MEDIA_URL, 'images', img) for img in os.listdir(folder_path)]
+    random.shuffle(images)
+
+    return render(request, 'explore.html', {'images': images})
 
 
 @login_required(login_url="login")
@@ -212,7 +219,6 @@ def create_poll(request):
     return render(request, 'create_poll.html', {'form': form})
 
 
-
 def view_polls(request):
     polls = Poll.objects.all()
     poll_data = []
@@ -222,11 +228,12 @@ def view_polls(request):
         form = PollCommentForm()
         choices = poll.choices.all()
         total_votes = sum(choice.vote_count for choice in choices)
-        results = [{'choice_text': choice.choice_text, 'percentage': (choice.vote_count / total_votes) * 100 if total_votes > 0 else 0} for choice in choices]
+        results = [{'choice_text': choice.choice_text,
+                    'percentage': (choice.vote_count / total_votes) * 100 if total_votes > 0 else 0} for choice in
+                   choices]
         poll_data.append({'poll': poll, 'results': results, 'comment_form': comment_form})
 
     return render(request, 'view_polls.html', {'poll_data': poll_data})
-
 
 
 @login_required(login_url="login")
