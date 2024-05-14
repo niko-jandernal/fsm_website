@@ -19,30 +19,29 @@ Create Post
 
         <div class="create-post-body">
             <div class="left-panel">
-                <!-- This label works as the upload button -->
+
                 <label for="id_image" class="image-upload-label">
-                    <!-- Actual file input, hidden but functional -->
+
                     <input type="file" name="image" accept="image/*" required="" aria-invalid="true" id="id_image">
 
                     <div class="image-upload-placeholder">
                         <div class="plus-icon">+</div>
                         <div class="add-photos-text">Add photos</div>
                     </div>
-                    <!-- Image preview container, initially hidden -->
+
                     <img id="imagePreview" src="#" alt="Image Preview" class="image-preview" />
                 </label>
             </div>
 
             <div class="right-panel">
                 <div class="user-info">
-                    <!-- Display username and current date -->
+
                     <i class='bx bx-user'></i>
                     <p class="username">{{ user.username }}</p>
-{#                    <p class="current-date">{{ current_date }}</p>#}
+
                 </div>
 
                 <div class="caption-container">
-                    <!-- Caption input -->
                     <label for="{{ form.caption.id_for_label }}">Caption</label>
                     <label for="id_caption"></label><textarea id="id_caption" name="caption" class="form-control" placeholder="Write your caption here..." rows="4" style="min-height: 200px; min-width: 130%; line-height: 1.5;"></textarea>
 
@@ -55,7 +54,7 @@ Create Post
 </div>
 
 <script>
-// JavaScript for handling image preview functionality
+
 document.addEventListener("DOMContentLoaded", function() {
     var fileInput = document.getElementById('id_image');
     var imagePreview = document.getElementById('imagePreview');
@@ -65,10 +64,9 @@ document.addEventListener("DOMContentLoaded", function() {
         var reader = new FileReader();
         reader.onload = function() {
             imagePreview.src = reader.result;
-            imagePreview.style.display = 'block'; // Show the image preview
-            imagePlaceholder.style.display = 'none'; // Hide the placeholder content
+            imagePreview.style.display = 'block';
+            imagePlaceholder.style.display = 'none';
         };
-        // Read the selected file and trigger onload
         reader.readAsDataURL(event.target.files[0]);
     });
 });

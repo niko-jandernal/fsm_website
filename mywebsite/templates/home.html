@@ -67,7 +67,7 @@ $(document).ready(function(){
     $('.like-btn').click(function(e){
         e.preventDefault();
         var post_id = $(this).data('post-id');
-        var btn = $(this); // Reference to the button
+        var btn = $(this);
         $.ajax({
             type: 'POST',
             url: `/post/${post_id}/like/`,
@@ -75,16 +75,16 @@ $(document).ready(function(){
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
             },
             success: function(response){
-                var icon = btn.find('i'); // Find the icon within the button
-                var likeText = btn.find('p'); // Find the like text within the button
+                var icon = btn.find('i');
+                var likeText = btn.find('p');
 
-                // Toggle the icon class based on whether the post is liked
+
                 if(response.is_liked){
-                    icon.removeClass('bx bx-heart').addClass('bx bxs-heart'); // Change to filled heart icon
-                    likeText.text(response.total_likes ); // Update likes count
+                    icon.removeClass('bx bx-heart').addClass('bx bxs-heart');
+                    likeText.text(response.total_likes );
                 } else {
-                    icon.removeClass('bx bxs-heart').addClass('bx bx-heart  '); // Change to outline heart icon
-                    likeText.text(response.total_likes); // Update likes count
+                    icon.removeClass('bx bxs-heart').addClass('bx bx-heart  ');
+                    likeText.text(response.total_likes);
                 }
             },
             error: function(response){
@@ -101,17 +101,16 @@ $(document).ready(function(){
         const isExpanded = $(this).data('expanded') === 'true';
         const totalComments = $(this).data('total-comments');
         if (isExpanded) {
-            // Collapse comments: Hide comments except for the first two
+
             $('.comment.extra-comment').addClass('hidden');
             $(this).text(`View all ${totalComments} comments`).data('expanded', 'false');
         } else {
-            // Expand comments: Show all comments
+
             $('.comment.extra-comment').removeClass('hidden');
             $(this).text('View Less').data('expanded', 'true');
         }
     });
 });
-
 
 
 
