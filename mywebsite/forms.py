@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django import forms
 from .models import Post, DiscussionPost
 from .models import Poll, Poll_Comment
+from .models import Album
 
 
 class CreateUserForm(UserCreationForm):
@@ -52,4 +53,15 @@ class PollCommentForm(forms.ModelForm):
                 'rows': 4,
                 'cols': 2
             })
+        }
+
+class AlbumForm(forms.ModelForm):
+    class Meta:
+        model  = Album
+        fields = ['title']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'placeholder': 'Album title…',
+                'class': 'form-control',
+            }),
         }

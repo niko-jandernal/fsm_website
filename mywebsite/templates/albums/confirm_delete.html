@@ -1,0 +1,12 @@
+{% extends "base.html" %} {% block title%} Album {% endblock %}
+{% block content %}
+  <div class="container py-5">
+    <h2>Delete album “{{ album.title }}”?</h2>
+    <p>This cannot be undone.</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Yes, delete it</button>
+      <a href="{% url 'album_detail' album.id %}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+{% endblock %}

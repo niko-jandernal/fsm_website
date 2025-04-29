@@ -80,3 +80,13 @@ class Image(models.Model):
 
     def __str__(self):
         return f"Image {self.id}"
+
+
+class Album(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='albums')
+    title = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    posts = models.ManyToManyField(Post, blank=True, related_name='albums')
+
+    def __str__(self):
+        return self.title

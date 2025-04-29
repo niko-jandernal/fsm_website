@@ -31,7 +31,19 @@ urlpatterns = [
     path('create_poll/', views.create_poll, name='create_poll'),
     path('view_polls/', view_polls, name='view_polls'),
     path('vote/<int:poll_id>/', views.vote, name='vote'),
-    path('add_comment/<int:poll_id>/', views.add_comment, name='add_comment')
+    path('add_comment/<int:poll_id>/', views.add_comment, name='add_comment'),
+
+    # path('albums/', views.album_list, name='album_list'),
+    # path('albums/create/', album_create, name='album_create'),
+    # path('albums/<int:album_id>/', album_detail, name='album_detail'),
+    # path('albums/<int:album_id>/add/<int:post_id>/', album_add_post, name='add_photo'),
+    # path('albums/<int:album_id>/remove/<int:post_id>/', album_remove_post, name='album_remove_post'),
+    path('albums/', views.album_list, name='album_list'),
+    path('albums/create/', views.album_create, name='album_create'),
+    path('albums/<int:album_id>/', views.album_detail, name='album_detail'),
+    path('albums/<int:album_id>/add/<int:post_id>/', views.album_add_photo, name='add_photo'),
+    path('albums/<int:album_id>/remove/<int:post_id>/', views.album_remove_post,   name='remove_photo'),
+    path('albums/<int:album_id>/delete/', views.album_delete, name='album_delete'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -21,6 +22,8 @@ from .models import DiscussionComment
 from .models import DiscussionPost
 from .models import Poll, Choice
 from .models import Post, Vote
+from .models import Album
+from .forms import AlbumForm
 
 api_key = settings.NYT_API_KEY
 
@@ -297,3 +300,85 @@ def poll_detail(request, poll_id):
         'has_voted': has_voted
     }
     return render(request, 'view_polls.html', context)
+
+
+@login_required
+def album_list(request):
+    # 1) Show all albums owned by you
+    albums = request.user.albums.all().order_by('-created_at')
+    return render(request, 'albums/list.html', {'albums': albums})
+
+
+@login_required
+def album_create(request):
+    if request.method == 'POST':
+        form = AlbumForm(request.POST)
+        if form.is_valid():
+            album = form.save(commit=False)
+            album.owner = request.user
+            album.save()
+            return redirect('album_detail', album.id)
+    else:
+        form = AlbumForm()
+    return render(request, 'albums/form.html', {'form': form})
+
+
+@login_required
+def album_detail(request, album_id):
+    # only let the owner view their own album
+    album = get_object_or_404(Album, id=album_id, owner=request.user)
+
+    # photos already added
+    album_posts = album.posts.all().order_by('-date_posted')
+
+    # your uploads _not_ yet in this album
+    your_photos = (
+        Post.objects
+        .filter(user=request.user)
+        .exclude(id__in=album_posts.values_list('id', flat=True))
+        .order_by('-date_posted')
+    )
+
+    # other users' uploads _not_ yet in this album
+    all_other_photos = (
+        Post.objects
+        .exclude(user=request.user)
+        .exclude(id__in=album_posts.values_list('id', flat=True))
+        .order_by('-date_posted')
+    )
+
+    return render(request, 'albums/detail.html', {
+        'album': album,
+        'album_posts': album_posts,
+        'your_photos': your_photos,
+        'all_other_photos': all_other_photos,
+    })
+
+
+@login_required(login_url="login")
+def album_add_photo(request, album_id, post_id):
+    # only owner can add
+    album = get_object_or_404(Album, id=album_id, owner=request.user)
+    post = get_object_or_404(Post, id=post_id)
+    album.posts.add(post)
+    return redirect('album_detail', album.id)
+
+@login_required(login_url="login")
+def album_remove_post(request, album_id, post_id):
+    # get the album and make sure it belongs to the current user
+    album = get_object_or_404(Album, id=album_id, owner=request.user)
+    # get the post to remove
+    post  = get_object_or_404(Post, id=post_id)
+    # remove it from the album’s M2M
+    album.posts.remove(post)
+    # send you back to the album detail page
+    return redirect('album_detail', album_id=album.id)
+
+@login_required
+def album_delete(request, album_id):
+    alb = get_object_or_404(Album, id=album_id, owner=request.user)
+    if request.method == 'POST':
+        alb.delete()
+        return redirect('album_list')
+    # if GET, show a simple confirmation page
+    return render(request, 'albums/confirm_delete.html', {'album': alb})
