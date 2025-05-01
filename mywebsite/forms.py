@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django import forms
 from .models import Post, DiscussionPost
 from .models import Poll, Poll_Comment
-from .models import Album
+from .models import Album, DiscussionTopic
 
 
 class CreateUserForm(UserCreationForm):
@@ -29,8 +29,20 @@ class DiscussionPostForm(forms.ModelForm):
         model = DiscussionPost
         fields = ['title', 'content']
         widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'Title...'}),
-            'content': forms.Textarea(attrs={'placeholder': 'Enter text here...'}),
+            'title': forms.TextInput(attrs={'class':'form-control','placeholder': 'Title...'}),
+            'content': forms.Textarea(attrs={'class':'form-control','placeholder': 'Enter text here...'}),
+        }
+
+
+class DiscussionTopicForm(forms.ModelForm):
+    class Meta:
+        model = DiscussionTopic
+        fields = ['title']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'placeholder': 'New topic title…',
+                'class': 'form-control',
+            }),
         }
 
 
@@ -55,9 +67,10 @@ class PollCommentForm(forms.ModelForm):
             })
         }
 
+
 class AlbumForm(forms.ModelForm):
     class Meta:
-        model  = Album
+        model = Album
         fields = ['title']
         widgets = {
             'title': forms.TextInput(attrs={

@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
 
 from .forms import CreateUserForm
 from .forms import DiscussionPostForm
@@ -24,6 +25,8 @@ from .models import Poll, Choice
 from .models import Post, Vote
 from .models import Album
 from .forms import AlbumForm
+from .forms import DiscussionTopicForm
+from .models import DiscussionTopic, TopicFollow
 
 api_key = settings.NYT_API_KEY
 
@@ -185,30 +188,121 @@ def create(request):
     return render(request, 'create.html', {'form': form})
 
 
+# views.py
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect, get_object_or_404
+
+from .models import (
+    DiscussionPost,
+    DiscussionTopic,
+    TopicFollow,  # <— your through model
+)
+from .forms import DiscussionPostForm
+
+
 @login_required(login_url="login")
 def discussions(request):
-    if request.method == 'POST':
+    # ————————————
+    # (1) Basic search & filter
+    q = request.GET.get('q', '').strip()
+    topic_id = request.GET.get('topic')
+    posts = DiscussionPost.objects.all()
+
+    if q:
+        posts = posts.filter(
+            Q(title__icontains=q) |
+            Q(content__icontains=q)
+        )
+    if topic_id:
+        posts = posts.filter(topic__id=topic_id)
+
+    # ————————————
+    # (2) “Following” toggle
+    follow_mode = (request.GET.get('following') == '1')
+
+    # load EVERY topic for dropdown
+    topics = DiscussionTopic.objects.order_by('title')
+
+    if follow_mode:
+        # fetch the TopicFollow rows for this user
+        follows = TopicFollow.objects.filter(user=request.user)
+        # pull out the topic-IDs they follow
+        followed_topic_ids = follows.values_list('topic_id', flat=True)
+        # now only show those topics
+        followed_topics = topics.filter(id__in=followed_topic_ids)
+        # and only show posts in those topics
+        posts = posts.filter(topic__id__in=followed_topic_ids)
+    else:
+        followed_topics = None
+
+    # ————————————
+    # (3) Pagination
+    posts = posts.order_by('-date_posted')
+    paginator = Paginator(posts, 8)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # ————————————
+    # (4) New-post form only in “all” mode
+    form = DiscussionPostForm()
+    if not follow_mode and request.method == "POST":
         form = DiscussionPostForm(request.POST)
         if form.is_valid():
-            discussion_post = form.save(commit=False)
-            discussion_post.author = request.user
-            discussion_post.save()
+            new_post = form.save(commit=False)
+            new_post.author = request.user
+            new_post.topic_id = request.POST['topic']
+            new_post.save()
             return redirect('discussions')
-    else:
-        form = DiscussionPostForm()
-    discussion_posts = DiscussionPost.objects.all().order_by('-date_posted')
-    return render(request, 'discussions.html', {'form': form, 'discussion_posts': discussion_posts})
+
+    # ————————————
+    return render(request, 'discussions/discussions.html', {
+        'q': q,
+        'topic_id': topic_id,
+        'topics': topics,
+        'follow_mode': follow_mode,
+        'followed_topics': followed_topics,
+        'page_obj': page_obj,
+        'form': form,
+    })
+
+
+@login_required(login_url="login")
+def topic_follow(request, topic_id):
+    topic = get_object_or_404(DiscussionTopic, id=topic_id)
+    # toggle
+    follow, created = TopicFollow.objects.get_or_create(
+        user=request.user,
+        topic=topic
+    )
+    if not created:
+        follow.delete()
+    # send them back to wherever they came from
+    return redirect(request.META.get('HTTP_REFERER', 'discussions'))
+
+
+@login_required(login_url="login")
+def discussion_detail(request, post_id):
+    post = get_object_or_404(DiscussionPost, id=post_id)
+    comments = post.comments.order_by('date_posted')
+    is_liked = post.likes.filter(id=request.user.id).exists()
+
+    return render(request, 'discussions/discussion_detail.html', {
+        'post': post,
+        'comments': comments,
+        'is_liked': is_liked,
+    })
 
 
 @login_required(login_url="login")
 def discussion_post_comment(request, post_id):
     post = get_object_or_404(DiscussionPost, id=post_id)
     if request.method == 'POST':
-        comment_content = request.POST.get('comment')
-        if comment_content:
-            DiscussionComment.objects.create(post=post, author=request.user, content=comment_content)
-            return redirect('discussions')
-    return render(request, 'discussions.html')
+        content = request.POST.get('comment')
+        if content:
+            DiscussionComment.objects.create(post=post, author=request.user, content=content)
+    return redirect('discussion_detail', post_id=post.id)
 
 
 @login_required(login_url="login")
@@ -219,6 +313,58 @@ def discussion_like_post(request, post_id):
     else:
         post.likes.add(request.user)
     return redirect('discussions')
+
+
+@login_required
+def topic_list(request):
+    q = request.GET.get('q', '').strip()
+    topics = DiscussionTopic.objects.all()
+    if q:
+        topics = topics.filter(title__icontains=q)
+    topics = topics.order_by('-created_at')
+    # allow creation inline
+    if request.method == 'POST':
+        form = DiscussionTopicForm(request.POST)
+        if form.is_valid():
+            topic = form.save(commit=False)
+            topic.creator = request.user
+            topic.save()
+            return redirect('topic_list')
+    else:
+        form = DiscussionTopicForm()
+    return render(request, 'discussions/topic_list.html', {
+        'topics': topics, 'q': q, 'form': form
+    })
+
+
+@login_required
+def topic_detail(request, topic_id):
+    topic = get_object_or_404(DiscussionTopic, id=topic_id)
+    posts = topic.posts.order_by('-date_posted')
+    is_following = TopicFollow.objects.filter(topic=topic, user=request.user).exists()
+    return render(request, 'discussions/topic_detail.html', {
+        'topic': topic, 'posts': posts, 'is_following': is_following
+    })
+
+
+@login_required
+def topic_follow(request, topic_id):
+    topic = get_object_or_404(DiscussionTopic, id=topic_id)
+    follow, created = TopicFollow.objects.get_or_create(topic=topic, user=request.user)
+    if not created:
+        # already followed → unfollow
+        follow.delete()
+    return redirect('topic_detail', topic_id=topic.id)
+
+
+@login_required
+def following_posts(request):
+    # all posts in topics this user follows
+    followed = DiscussionTopic.objects.filter(followers__user=request.user)
+    posts = DiscussionPost.objects.filter(topic__in=followed).order_by('-date_posted')
+    return render(request, 'discussions/following.html', {
+        'posts': posts
+    })
 
 
 @login_required(login_url="login")
@@ -363,16 +509,18 @@ def album_add_photo(request, album_id, post_id):
     album.posts.add(post)
     return redirect('album_detail', album.id)
 
+
 @login_required(login_url="login")
 def album_remove_post(request, album_id, post_id):
     # get the album and make sure it belongs to the current user
     album = get_object_or_404(Album, id=album_id, owner=request.user)
     # get the post to remove
-    post  = get_object_or_404(Post, id=post_id)
+    post = get_object_or_404(Post, id=post_id)
     # remove it from the album’s M2M
     album.posts.remove(post)
     # send you back to the album detail page
     return redirect('album_detail', album_id=album.id)
+
 
 @login_required
 def album_delete(request, album_id):

@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load disc_extras %}
+
+{% block title %}Discussions{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  {# Search + Topic filter + Follow toggle #}
+  <div class="d-flex align-items-center mb-4 gap-2">
+    <form method="get" class="flex-grow-1 d-flex">
+      <input
+        type="text"
+        name="q"
+        value="{{ q }}"
+        class="form-control me-2"
+        placeholder="Search discussions…">
+      <select name="topic" class="form-select me-2" onchange="this.form.submit()">
+        <option value="">All topics</option>
+        {% for t in topics %}
+          <option
+            value="{{ t.id }}"
+            {% if t.id|stringformat:'s' == topic_id %}selected{% endif %}>
+            {{ t.title }}
+          </option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+
+    {% if topic_id %}
+      <form
+        method="post"
+        action="{% url 'topic_follow' topic_id %}">
+        {% csrf_token %}
+        {% with topic=topics|get_by_id:topic_id %}
+          {% if topic %}
+            {% if topic in followed_topics %}
+              <button class="btn btn-outline-danger">
+                Unfollow “{{ topic.title }}”
+              </button>
+            {% else %}
+              <button class="btn btn-outline-success">
+                Follow “{{ topic.title }}”
+              </button>
+            {% endif %}
+          {% endif %}
+        {% endwith %}
+      </form>
+    {% endif %}
+
+    <a
+      href="{% url 'discussions' %}{% if follow_mode %}?following=1{% endif %}"
+      class="btn btn-outline-secondary ms-2">
+      {% if follow_mode %}Viewing your followed topics{% else %}View only followed{% endif %}
+    </a>
+  </div>
+
+  {# New post form (only when not in following mode) #}
+  {% if not follow_mode %}
+    <div class="card mb-4 p-3">
+      <h5 class="mb-3">Create a new discussion</h5>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          {{ form.title.label_tag }}
+          {{ form.title }}
+        </div>
+        <div class="mb-3">
+          {{ form.content.label_tag }}
+          {{ form.content }}
+        </div>
+        <div class="mb-3">
+          <label for="id_topic">Choose topic…</label>
+          <select name="topic" id="id_topic" class="form-select">
+            <option value="" disabled selected>Choose topic…</option>
+            {% for t in topics %}
+              <option value="{{ t.id }}">{{ t.title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Post</button>
+      </form>
+    </div>
+  {% endif %}
+
+  {# Discussion posts listing #}
+  {% for post in page_obj %}
+    <div class="card mb-3 p-3">
+      <h6>
+        <a href="{% url 'discussion_detail' post.id %}">
+          {{ post.title }}
+        </a>
+      </h6>
+      <p class="mb-1">{{ post.content }}</p>
+      <small class="text-muted">
+        By {{ post.author.username }} • {{ post.date_posted|date:"SHORT_DATETIME_FORMAT" }}
+      </small>
+      <div class="mt-2">
+        <form
+          action="{% url 'discussion_like_post' post.id %}"
+          method="post"
+          class="d-inline">
+          {% csrf_token %}
+          <button class="btn btn-sm btn-outline-{{ post.is_liked|yesno:"danger,primary" }}">
+            <i class="bx bx-{{ post.is_liked|yesno:"bxs-heart,bx-heart" }}"></i>
+            {{ post.likes.count }}
+          </button>
+        </form>
+        <span class="ms-3">{{ post.comments.count }} comments</span>
+      </div>
+    </div>
+  {% empty %}
+    <p>No discussions found.</p>
+  {% endfor %}
+
+  {# Pagination #}
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a
+            class="page-link"
+            href="?{% if q %}q={{ q }}&{% endif %}{% if topic_id %}topic={{ topic_id }}&{% endif %}{% if follow_mode %}following=1&{% endif %}page={{ page_obj.previous_page_number }}">
+            ‹ Previous
+          </a>
+        </li>
+      {% endif %}
+      <li class="page-item disabled">
+        <span class="page-link">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+      </li>
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a
+            class="page-link"
+            href="?{% if q %}q={{ q }}&{% endif %}{% if topic_id %}topic={{ topic_id }}&{% endif %}{% if follow_mode %}following=1&{% endif %}page={{ page_obj.next_page_number }}">
+            Next ›
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+
+</div>
+{% endblock %}

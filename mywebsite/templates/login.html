@@ -33,7 +33,7 @@
     <input type="submit" value="Log in!">
     </form>
     {% for message in messages %}
-    <p class="success-message">{{ message }}</p>
+    <p class="error-message">{{ message }}</p>
     {% endfor %}
     <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
 </div>

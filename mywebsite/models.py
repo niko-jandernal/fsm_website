@@ -20,8 +20,32 @@ class Comment(models.Model):
         return f'Comment by {self.author} on {self.post}'
 
 
-class DiscussionPost(models.Model):
+# class DiscussionPost(models.Model):
+#     title = models.CharField(max_length=255)
+#     content = models.TextField()
+#     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='discussion_posts')
+#     date_posted = models.DateTimeField(auto_now_add=True)
+#     likes = models.ManyToManyField(User, related_name='liked_discussion_posts', blank=True)
+#
+#     def __str__(self):
+#         return self.title
+#
+#
+
+
+
+class DiscussionTopic(models.Model):
     title = models.CharField(max_length=255)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed_topics')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+
+class DiscussionPost(models.Model):
+    topic = models.ForeignKey(DiscussionTopic, on_delete=models.CASCADE, related_name='posts')
+    title = models.CharField(max_length=255, default="")
     content = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='discussion_posts')
     date_posted = models.DateTimeField(auto_now_add=True)
@@ -29,6 +53,15 @@ class DiscussionPost(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class TopicFollow(models.Model):
+    topic = models.ForeignKey(DiscussionTopic, on_delete=models.CASCADE, related_name='followers')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follows')
+    followed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('topic', 'user')
 
 
 class DiscussionComment(models.Model):
@@ -84,9 +117,9 @@ class Image(models.Model):
 
 class Album(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='albums')
-    title = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=100)
     posts = models.ManyToManyField(Post, blank=True, related_name='albums')
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title

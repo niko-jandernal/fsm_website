@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Following{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h2>Posts from Your Followed Topics</h2>
+  <div class="row">
+    {% for post in posts %}
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5><a href="{% url 'discussion_detail' post.id %}">{{ post.title }}</a></h5>
+            <p>{{ post.content|truncatewords:20 }}</p>
+          </div>
+          <div class="card-footer text-muted">
+            Topic: <a href="{% url 'topic_detail' post.topic.id %}">{{ post.topic.title }}</a> • {{ post.date_posted|date:"SHORT_DATE_FORMAT" }}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>You’re not following any topics yet or there are no new posts.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
