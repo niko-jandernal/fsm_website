@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+    <style>
+    input[type="checkbox"][name$="-DELETE"] {
+        display: none;
+    }
+    #choices-container .choice-item {
+        background-color: #ffffff;
+        border: 1px solid #dee2e6;
+        border-radius: .25rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+
+</style>
+  <div class="container py-4">
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        {{ form.question.label_tag }}
+        {{ form.question|add_class:"form-control" }}
+        {% for err in form.question.errors %}
+          <div class="invalid-feedback d-block">{{ err }}</div>
+        {% endfor %}
+      </div>
+
+      <h3>Choices</h3>
+        <div id="choices-container">
+          {{ formset.management_form }}
+
+          {% for subform in formset %}
+            <div class="choice-item">
+              <div class="mb-2">
+                {{ subform.choice_text.label_tag.as_widget|add_class:"form-label" }}
+                {{ subform.choice_text|add_class:"form-control" }}
+                {% for err in subform.choice_text.errors %}
+                  <div class="invalid-feedback d-block">{{ err }}</div>
+                {% endfor %}
+              </div>
+              {{ subform.DELETE }}  {# hidden checkbox #}
+              <button type="button" class="btn btn-sm btn-outline-danger remove-choice">
+                Remove
+              </button>
+            </div>
+          {% endfor %}
+        </div>
+
+
+    <!-- prototype for new forms -->
+    <div id="form-template" style="display:none;">
+      <div class="choice-item">
+        <div class="mb-2">
+          <label class="form-label" for="id_choices-__prefix__-choice_text">
+            Choice
+          </label>
+          <input type="text"
+                 name="choices-__prefix__-choice_text"
+                 id="id_choices-__prefix__-choice_text"
+                 class="form-control">
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-danger remove-choice">
+          Remove
+        </button>
+      </div>
+    </div>
+
+    <button id="add-choice" class="btn btn-sm btn-outline-secondary mb-4">
+      + Add another choice
+    </button>
+    <button type="submit" class="btn btn-primary">Post poll</button>
+</form>
+  </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+      const container  = document.getElementById('choices-container');
+      const totalForms = document.getElementById('id_choices-TOTAL_FORMS');
+      const template   = document.getElementById('form-template').innerHTML;
+
+      // Function to attach remove‐handlers
+      function attachRemoveListeners() {
+        container.querySelectorAll('.remove-choice').forEach(btn => {
+          if (!btn.dataset.listener) {
+            btn.dataset.listener = true;
+            btn.addEventListener('click', function(){
+              const item = this.closest('.choice-item');
+              const deleteInput = item.querySelector("input[type='checkbox'][name$='-DELETE']");
+              if (deleteInput) {
+                // mark existing form for deletion
+                deleteInput.checked = true;
+                item.style.display = 'none';
+              } else {
+                // entirely remove new form
+                item.remove();
+                // update totalForms
+                totalForms.value =
+                  container.querySelectorAll('.choice-item').length;
+              }
+            });
+          }
+        });
+      }
+
+      // Initial binding
+      attachRemoveListeners();
+
+      // Add new choice
+      document.getElementById('add-choice').addEventListener('click', function(e){
+        e.preventDefault();
+        const count = parseInt(totalForms.value);
+        // clone template
+        const html = template.replace(/__prefix__/g, count);
+        container.insertAdjacentHTML('beforeend', html);
+        totalForms.value = count + 1;
+        attachRemoveListeners();
+      });
+    });
+</script>
+
+{% endblock %}

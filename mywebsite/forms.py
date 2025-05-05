@@ -2,8 +2,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
 from .models import Post, DiscussionPost
-from .models import Poll, Poll_Comment
+from .models import Poll_Comment
 from .models import Album, DiscussionTopic
+from django.forms import inlineformset_factory
+from .models import Poll, Choice
 
 
 class CreateUserForm(UserCreationForm):
@@ -78,3 +80,13 @@ class AlbumForm(forms.ModelForm):
                 'class': 'form-control',
             }),
         }
+
+
+
+ChoiceFormSet = inlineformset_factory(
+    Poll,
+    Choice,
+    fields=('choice_text',),
+    extra=1,           # start with one blank choice
+    can_delete=True    # allow removal of existing ones
+)

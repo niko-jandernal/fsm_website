@@ -7,26 +7,27 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
-from django.core.paginator import Paginator
+from django.views.decorators.http import require_POST
 
+from .forms import AlbumForm
 from .forms import CreateUserForm
 from .forms import DiscussionPostForm
-from .forms import PollForm, PollCommentForm
+from .forms import DiscussionTopicForm
 from .forms import PostForm
+from .models import Album, Poll_Comment
 from .models import Comment
 from .models import DiscussionComment
 from .models import DiscussionPost
+from .models import DiscussionTopic, TopicFollow
 from .models import Poll, Choice
 from .models import Post, Vote
-from .models import Album
-from .forms import AlbumForm
-from .forms import DiscussionTopicForm
-from .models import DiscussionTopic, TopicFollow
+from .forms import PollForm, PollCommentForm, ChoiceFormSet
+from django.db.models import Sum, Count
 
 api_key = settings.NYT_API_KEY
 
@@ -187,19 +188,6 @@ def create(request):
 
     return render(request, 'create.html', {'form': form})
 
-
-# views.py
-from django.contrib.auth.decorators import login_required
-from django.db.models import Q
-from django.core.paginator import Paginator
-from django.shortcuts import render, redirect, get_object_or_404
-
-from .models import (
-    DiscussionPost,
-    DiscussionTopic,
-    TopicFollow,  # <— your through model
-)
-from .forms import DiscussionPostForm
 
 
 @login_required(login_url="login")
@@ -367,39 +355,46 @@ def following_posts(request):
     })
 
 
-@login_required(login_url="login")
+@login_required
 def create_poll(request):
     if request.method == 'POST':
         form = PollForm(request.POST)
-        if form.is_valid():
+        formset = ChoiceFormSet(request.POST, prefix='choices')
+        if form.is_valid() and formset.is_valid():
             poll = form.save(commit=False)
             poll.created_by = request.user
             poll.save()
-            for i in range(1, 5):  # Assuming we allow up to 4 choices per poll for simplicity
-                choice_text = request.POST.get(f'choice{i}', '').strip()
-                if choice_text:
-                    Choice.objects.create(poll=poll, choice_text=choice_text)
-            return redirect('view_polls')
+            formset.instance = poll
+            formset.save()
+            return redirect('poll_detail', poll_id=poll.id)
     else:
         form = PollForm()
-    return render(request, 'create_poll.html', {'form': form})
+        formset = ChoiceFormSet(prefix='choices')
+
+    return render(request, 'polls/create_poll.html', {
+        'form': form,
+        'formset': formset,
+    })
 
 
 def view_polls(request):
+    q = request.GET.get('q', '').strip()
     polls = Poll.objects.all()
-    poll_data = []
-    comment_form = PollCommentForm()  # Instantiate your comment form here
+    if q:
+        polls = polls.filter(Q(question__icontains=q))
+    polls = polls.annotate(
+        total_votes=Sum('choices__vote_count'),
+        comment_count=Count('comments')
+    ).order_by('-created_at')
 
-    for poll in polls:
-        form = PollCommentForm()
-        choices = poll.choices.all()
-        total_votes = sum(choice.vote_count for choice in choices)
-        results = [{'choice_text': choice.choice_text,
-                    'percentage': (choice.vote_count / total_votes) * 100 if total_votes > 0 else 0} for choice in
-                   choices]
-        poll_data.append({'poll': poll, 'results': results, 'comment_form': comment_form})
+    paginator = Paginator(polls, 6)     # six cards per “page”
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
 
-    return render(request, 'view_polls.html', {'poll_data': poll_data})
+    return render(request, 'polls/view_polls.html', {
+        'polls_page': page_obj,
+        'q': q,
+    })
 
 
 @login_required(login_url="login")
@@ -408,7 +403,7 @@ def vote(request, poll_id):
     try:
         selected_choice = poll.choices.get(pk=request.POST['vote'])
     except (KeyError, Choice.DoesNotExist):
-        return render(request, 'view_polls.html', {
+        return render(request, 'polls/view_polls.html', {
             'poll': poll,
             'error_message': "You didn't select a choice or an invalid choice was made.",
         })
@@ -434,18 +429,107 @@ def add_comment(request, poll_id):
             return render(request, 'home.html', {'form': form, 'poll': poll})
     else:
         form = PollCommentForm()
-        return render(request, 'view_polls.html', {'form': form, 'poll': poll})
+        return render(request, 'polls/view_polls.html', {'form': form, 'poll': poll})
 
 
+@login_required(login_url="login")
+@require_POST
+def comment_ajax(request, poll_id):
+    if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+
+    poll = get_object_or_404(Poll, pk=poll_id)
+    content = request.POST.get('comment_text', '').strip()
+    if not content:
+        return JsonResponse({'error': 'Empty comment'}, status=400)
+
+    comment = Poll_Comment.objects.create(
+        poll=poll,
+        comment_text=content,
+        created_by=request.user
+    )
+
+    # Return the new comment’s data for immediate rendering
+    return JsonResponse({
+        'comment_text': comment.comment_text,
+        'author': comment.created_by.username,
+        'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M')
+    })
+
+
+@login_required(login_url="login")
 def poll_detail(request, poll_id):
-    poll = get_object_or_404(Poll, id=poll_id)
-    has_voted = Vote.objects.filter(poll=poll, voted_by=request.user).exists()
+    poll = get_object_or_404(Poll, pk=poll_id)
+    choices = list(poll.choices.all())
+    counts = [c.vote_count for c in choices]
+    total = sum(counts) or 1
 
-    context = {
+    # Get user's current vote
+    try:
+        user_vote = Vote.objects.get(poll=poll, voted_by=request.user)
+        user_choice_id = user_vote.choice.id
+    except Vote.DoesNotExist:
+        user_choice_id = None
+
+    data = []
+    for choice, count in zip(choices, counts):
+        pct = round(count * 100 / total, 1)
+        data.append({
+            'id': choice.id,
+            'text': choice.choice_text,
+            'count': count,
+            'pct': pct,
+        })
+
+    comments = poll.comments.all().order_by('-created_at')
+
+    return render(request, 'polls/detail.html', {
         'poll': poll,
-        'has_voted': has_voted
-    }
-    return render(request, 'view_polls.html', context)
+        'chart_data': data,
+        'total_votes': total,
+        'comments': comments,
+        'user_choice_id': user_choice_id,
+    })
+
+@login_required(login_url="login")
+@require_POST
+def vote_ajax(request, poll_id):
+    if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
+        return JsonResponse({'error': 'Invalid request'}, status=400)
+
+    poll = get_object_or_404(Poll, pk=poll_id)
+    choice_id = request.POST.get('choice_id')
+
+    try:
+        new_choice = poll.choices.get(pk=choice_id)
+    except (KeyError, Choice.DoesNotExist):
+        return JsonResponse({'error': 'Choice not found'}, status=404)
+
+    # Check for existing vote and update if needed
+    try:
+        vote = Vote.objects.get(poll=poll, voted_by=request.user)
+        old_choice = vote.choice
+        if old_choice != new_choice:
+            # Decrement old choice count
+            old_choice.vote_count = max(0, old_choice.vote_count - 1)
+            old_choice.save()
+            # Update vote to new choice
+            vote.choice = new_choice
+            vote.save()
+            # Increment new choice count
+            new_choice.vote_count += 1
+            new_choice.save()
+    except Vote.DoesNotExist:
+        # Create new vote
+        Vote.objects.create(poll=poll, choice=new_choice, voted_by=request.user)
+        new_choice.vote_count += 1
+        new_choice.save()
+
+    # Return updated data
+    labels = [c.choice_text for c in poll.choices.all()]
+    counts = [c.vote_count for c in poll.choices.all()]
+
+    return JsonResponse({'labels': labels, 'counts': counts})
 
 
 @login_required
