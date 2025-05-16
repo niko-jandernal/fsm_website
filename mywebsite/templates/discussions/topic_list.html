@@ -24,16 +24,21 @@
     </div>
   </div>
 
-  <!-- Topic List -->
-  <div class="list-group">
-    {% for topic in topics %}
-      <a href="{% url 'topic_detail' topic.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+
+<!-- Topic List -->
+<div class="list-group">
+  {% for topic in topics %}
+    <div class="list-group-item d-flex justify-content-between align-items-center">
+      <a href="{% url 'topic_detail' topic.id %}" class="text-decoration-none text-dark flex-grow-1">
         {{ topic.title }}
         <small class="text-muted">by {{ topic.creator.username }} on {{ topic.created_at|date:"SHORT_DATE_FORMAT" }}</small>
       </a>
-    {% empty %}
-      <p>No topics found.</p>
-    {% endfor %}
-  </div>
+      {% if topic.creator == user %}
+        <a href="{% url 'topic_delete' topic.id %}" class="btn btn-danger btn-sm ms-2">Delete</a>
+      {% endif %}
+    </div>
+  {% empty %}
+    <p>No topics found.</p>
+  {% endfor %}
 </div>
 {% endblock %}

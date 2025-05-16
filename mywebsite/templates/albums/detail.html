@@ -41,7 +41,7 @@
     {% for photo in your_photos %}
       <div class="col-md-3 mb-4">
         <div class="card">
-          <img src="{{ photo.image.url }}" class="card-img-top">
+          <img src="{{ photo.image.url }}" class="card-img-top" loading="lazy">
           <div class="card-body text-center">
             <a href="{% url 'add_photo' album.id photo.id %}"
                class="btn btn-outline-primary btn-sm">
@@ -62,7 +62,7 @@
     {% for photo in all_other_photos %}
       <div class="col-md-3 mb-4">
         <div class="card">
-          <img src="{{ photo.image.url }}" class="card-img-top">
+          <img src="{{ photo.image.url }}" class="card-img-top" loading="lazy">
           <div class="card-body text-center">
             <a href="{% url 'add_photo' album.id photo.id %}"
                class="btn btn-outline-primary btn-sm">

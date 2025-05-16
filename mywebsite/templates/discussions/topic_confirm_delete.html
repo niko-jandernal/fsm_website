@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Delete Topic{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2>Delete Topic</h2>
+  <p>Are you sure you want to delete "{{ topic.title }}"?</p>
+  <p class="text-danger">This action cannot be undone.</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="{% url 'topic_list' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

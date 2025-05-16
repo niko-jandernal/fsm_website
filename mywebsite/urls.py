@@ -36,17 +36,15 @@ urlpatterns = [
         path('topics/<int:topic_id>/follow/', topic_follow, name='topic_follow'),
 
         path('discussions/following/', following_posts, name='following_posts'),
-
+        path('topics/<int:topic_id>/delete/', views.topic_delete, name='topic_delete'),
         path('create_poll/', views.create_poll, name='create_poll'),
         path('view_polls/', view_polls, name='view_polls'),
-        # path('vote/<int:poll_id>/', views.vote, name='vote'),
-        # path('add_comment/<int:poll_id>/', views.add_comment, name='add_comment'),
+
         path('vote/<int:poll_id>/', views.vote, name='vote'),
         path('add_comment/<int:poll_id>/', views.add_comment, name='add_comment'),
         path('polls/<int:poll_id>/', views.poll_detail,   name='poll_detail'),
         path('polls/<int:poll_id>/vote_ajax/',   views.vote_ajax,    name='vote_ajax'),
         path('polls/<int:poll_id>/comment_ajax/',views.comment_ajax, name='comment_ajax'),
-
 
         path('albums/', views.album_list, name='album_list'),
         path('albums/create/', views.album_create, name='album_create'),

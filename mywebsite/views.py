@@ -144,8 +144,8 @@ def search_users(request):
 
 @login_required(login_url="login")
 def explore(request):
-    folder_path = os.path.join(settings.MEDIA_ROOT, 'images')
-    images = [os.path.join(settings.MEDIA_URL, 'images', img) for img in os.listdir(folder_path)]
+    folder_path = os.path.join(settings.MEDIA_ROOT, 'posts')
+    images = [os.path.join(settings.MEDIA_URL, 'posts', img) for img in os.listdir(folder_path)]
     random.shuffle(images)
 
     return render(request, 'explore.html', {'images': images})
@@ -187,7 +187,6 @@ def create(request):
         form = PostForm()
 
     return render(request, 'create.html', {'form': form})
-
 
 
 @login_required(login_url="login")
@@ -382,12 +381,11 @@ def view_polls(request):
     polls = Poll.objects.all()
     if q:
         polls = polls.filter(Q(question__icontains=q))
-    polls = polls.annotate(
-        total_votes=Sum('choices__vote_count'),
-        comment_count=Count('comments')
-    ).order_by('-created_at')
 
-    paginator = Paginator(polls, 6)     # six cards per “page”
+    polls = polls.annotate(total_votes=Sum('choices__vote_count'), ).annotate(
+        comment_count=Count('comments', distinct=True)).order_by('-created_at')
+
+    paginator = Paginator(polls, 6)  # six cards per “page”
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
 
@@ -396,6 +394,21 @@ def view_polls(request):
         'q': q,
     })
 
+@login_required(login_url="login")
+def topic_delete(request, topic_id):
+    topic = get_object_or_404(DiscussionTopic, id=topic_id)
+
+    # Only allow creator to delete
+    if topic.creator != request.user:
+        messages.error(request, "You don't have permission to delete this topic.")
+        return redirect('topic_list')
+
+    if request.method == 'POST':
+        topic.delete()
+        messages.success(request, "Topic deleted successfully.")
+        return redirect('topic_list')
+
+    return render(request, 'discussions/topic_confirm_delete.html', {'topic': topic})
 
 @login_required(login_url="login")
 def vote(request, poll_id):
@@ -490,6 +503,7 @@ def poll_detail(request, poll_id):
         'comments': comments,
         'user_choice_id': user_choice_id,
     })
+
 
 @login_required(login_url="login")
 @require_POST

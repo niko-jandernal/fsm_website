@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-4">
+
   <div class="d-flex justify-content-between align-items-center mb-3">
     <form class="d-flex" method="get">
       <input type="search" name="q" value="{{ q }}"
@@ -12,25 +13,28 @@
     </a>
   </div>
 
-  <div id="poll-cards" class="row g-4">
+  <ul class="list-group mb-4" id="poll-list">
     {% for poll in polls_page.object_list %}
-      <div class="col-sm-6 col-lg-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">{{ poll.question }}</h5>
-            <p class="card-text text-muted mb-3">
-              {{ poll.total_votes|default:0 }} votes &bull;
-              {{ poll.comment_count }} comments
-            </p>
-            <a href="{% url 'poll_detail' poll.id %}"
-               class="btn btn-outline-primary mt-auto">
-              View Poll
-            </a>
-          </div>
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="ms-2 me-auto">
+          <a href="{% url 'poll_detail' poll.id %}" class="text-decoration-none">
+            <div class="fw-bold">{{ poll.question }}</div>
+          </a>
+          <small class="text-muted">
+            {{ poll.total_votes|default:0 }} votes &bull;
+            {{ poll.comment_count }} comments
+          </small>
         </div>
-      </div>
+        <a href="{% url 'poll_detail' poll.id %}" class="btn btn-sm btn-outline-primary">
+          View
+        </a>
+      </li>
+    {% empty %}
+      <li class="list-group-item text-center text-muted">
+        No polls found.
+      </li>
     {% endfor %}
-  </div>
+  </ul>
 
   {% if polls_page.has_next %}
     <div id="scroll-sentinel"
@@ -42,7 +46,9 @@
       </div>
     </div>
   {% endif %}
+
 </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function(){
