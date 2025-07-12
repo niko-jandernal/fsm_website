@@ -1,7 +1,7 @@
 # FSM – Fashion Social Media Platform 
 *An interactive platform built with Django, designed specifically for fashion enthusiasts.*
 ## 1. About the Project
-FSM (Fashion Social Media) is a fashion-focused social media platform I built as my projects during the Bachelor's and Masters dissertations of my Computer Science degree at Newcastle University.
+FSM is a fashion-focused social platform I developed during both my Bachleor's and Master's dissertations of my Computer Science degree at Newcastle University.
 
 The idea came from a simple observation: most social media platforms are cluttered with noise and don’t offer dedicated spaces for communities like fashion lovers to interact meaningfully. FSM aims to fill that gap — offering a cleaner, more focused space where users can:
 
