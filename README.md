@@ -76,3 +76,36 @@ python manage.py createsuperuser
 
 ### 6. Start the development server
 python manage.py runserver
+
+### 7. Access the Platform
+
+Open your browser and visit:  
+[http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+## Performance Improvements
+
+This project involved a lot of work on improving technical performance and user experience:
+
+- Page load time reduced from ~4s to under 2s
+- Lighthouse score improvements:
+  - **Performance**: 76 → 93
+  - **Accessibility**: 84 → 91
+- Implemented:
+  - Native lazy loading
+  - AJAX interactions
+  - Infinite scroll
+  - Static file compression (gzip & Brotli)
+
+
+## What's Next (Future Work)
+
+If I were to continue developing FSM, here’s what I’d aim to implement:
+
+-  Drag-and-drop album editing
+-  Notification system
+-  Personalised feeds and following functionality
+-  Mobile-first UI refinements
+-  User onboarding walkthroughs
+
+
+
